@@ -5,6 +5,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  FormHelperText,
 } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -19,15 +20,16 @@ export default function PasswordField(props) {
       margin={props.margin}
       required
       size={props.size}
+      error={props.error}
     >
-      <InputLabel htmlFor='outlined-adornment-password'>
+      <InputLabel htmlFor={'outlined-adornment' + props.name}>
         {props.label}
       </InputLabel>
       <OutlinedInput
-        id='outlined-adornment-password'
+        id={'outlined-adornment' + props.name}
         type={props.showPassword ? 'text' : 'password'}
         value={props.password}
-        onChange={props.handleChange}
+        onChange={props.onChange}
         endAdornment={
           <InputAdornment position='end'>
             <IconButton
@@ -42,6 +44,9 @@ export default function PasswordField(props) {
         }
         labelWidth={props.labelWidth}
       />
+      <FormHelperText id={props.name + '-helper-text'}>
+        {props.helperText}
+      </FormHelperText>
     </FormControl>
   );
 }

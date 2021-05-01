@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   // eslint-disable-next-line
   Button,
-  TextField,
   Link,
   Grid,
   Box,
@@ -15,8 +14,7 @@ import {
   Container,
 } from '@material-ui/core';
 import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
-import PasswordField from '../../components/PasswordField/PasswordField';
-import SelectOption from '../../components/SelectOption/SelectOption';
+import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 
 import AuthLogic from './AuthLogic';
 
@@ -46,14 +44,11 @@ function Auth() {
   const classes = useStyles();
 
   const {
-    onMobile,
+    fieldsObj,
     displaySignIn,
     switchSignIn,
-    passwordValues,
-    authValues,
-    updateAuthValue,
-    errors,
     signup,
+    signin,
   } = AuthLogic();
 
   return (
@@ -66,107 +61,14 @@ function Auth() {
           {displaySignIn ? 'Connexion' : 'Inscription'}
         </Typography>
         <Box noValidate className={classes.form}>
-          {!displaySignIn ? (
-            <>
-              <TextField
-                variant='outlined'
-                margin='normal'
-                required
-                fullWidth
-                id='email'
-                label='Adresse email'
-                name='email'
-                autoComplete='email'
-                autoFocus={!onMobile}
-                error={errors.email}
-                helperText={errors.emailHelper}
-              />
-              <TextField
-                variant='outlined'
-                margin='normal'
-                required
-                fullWidth
-                id='username'
-                label="Nom d'utilisateur"
-                name='username'
-                error={errors.username}
-                helperText={errors.usernameHelper}
-              />
-              <TextField
-                variant='outlined'
-                margin='normal'
-                required
-                fullWidth
-                id='fullName'
-                label='Nom complet'
-                name='fullName'
-              />
-              <TextField
-                variant='outlined'
-                margin='normal'
-                fullWidth
-                id='phone'
-                label='Numéro de téléphone'
-                name='phone'
-                autoComplete='tel'
-              />
-              <SelectOption
-                label='Collège'
-                variant='outlined'
-                fullWidth
-                margin='normal'
-              >
-                <option value={1}>Saussure</option>
-                <option value={2}>Andrée-Chavanne</option>
-                <option value={3}>Sismondi</option>
-              </SelectOption>
-            </>
-          ) : (
-            <TextField
-              variant='outlined'
-              margin='normal'
-              required
-              fullWidth
-              id='emailOrUsername'
-              label="Adresse email ou nom d'utilisateur"
-              name='emailOrUsername'
-              autoComplete='email'
-              autoFocus={!onMobile}
-            />
-          )}
-          <PasswordField
-            fullWidth
-            variant='outlined'
-            label='Mot de passe'
-            labelWidth={110}
-            margin='normal'
-            {...passwordValues}
-            password={authValues.password}
-            handleChange={updateAuthValue('password')}
-            error={errors.password}
-            helperText={errors.passwordHelper}
-          />
-          {!displaySignIn && (
-            <PasswordField
-              fullWidth
-              variant='outlined'
-              label='Confirmer mot de passe'
-              labelWidth={185}
-              margin='normal'
-              {...passwordValues}
-              password={authValues.passwordConf}
-              handleChange={updateAuthValue('passwordConf')}
-              error={errors.password}
-              helperText={errors.passwordHelper}
-            />
-          )}
+          <FieldsGroup fieldsObj={fieldsObj} />
           <Button
             type='submit'
             fullWidth
             variant='contained'
             color='primary'
             className={classes.submit}
-            onClick={displaySignIn ? () => {} : signup}
+            onClick={displaySignIn ? signin : signup}
           >
             {displaySignIn ? 'Se connecter' : "S'inscrire"}
           </Button>
