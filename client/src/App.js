@@ -5,6 +5,8 @@ import { CssBaseline } from '@material-ui/core';
 
 import Home from './pages/Home/Home';
 import Auth from './pages/Auth/Auth';
+import AuthConfirm from './pages/AuthConfirm/AuthConfirm';
+import Profile from './pages/Profile/Profile';
 import Help from './pages/Help/Help';
 import Contact from './pages/Contact/Contact';
 import Sell from './pages/Sell/Sell';
@@ -17,7 +19,13 @@ function App() {
       <Router>
         <Switch>
           <Route path='/' exact component={Home} />
-          <Route path='/auth' exact component={Auth} />
+          <Route path='/auth/:option' exact component={Auth} />
+          <Route
+            path='/auth/confirm/:confirmationCode'
+            exact
+            component={AuthConfirm}
+          />
+          <Route path='/profile' exact component={Profile} />
           <Route path='/help' exact component={Help} />
           <Route path='/contact' exact component={Contact} />
           <Route path='/sell' exact component={Sell} />

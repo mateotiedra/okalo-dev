@@ -3,56 +3,64 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-
-const jwt = require('jsonwebtoken');
 
 const app = express();
+var corsOptions = {
+  origin: process.env.APP_ORIGIN,
+  methods: ['GET', 'POST'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
 
-// Use cors as a middleware
-const origin = 'http://' + process.env.DB_HOST + ':' + process.env.FRONT_PORT;
-app.use(
-  cors({
-    origin: [origin],
-    methods: ['GET', 'POST'],
-    credentials: true,
-  })
-);
-
-app.use(cookieParser());
-
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    key: 'userId',
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      expire: 60 * 60 * 24,
-    },
-  })
-);
+// database
+const db = require('./app/models');
+const Role = db.role;
+
+// force: true will drop the table if it already exists
+if (false) {
+  db.sequelize.sync({ force: true }).then(() => {
+    console.log('Drop and Resync Database with { force: true }');
+    initial();
+  });
+} else {
+  db.sequelize.sync();
+}
 
 // simple route
 app.get('/api', (req, res) => {
-  console.log('dfghjklé');
-  res.json({ message: 'Welcome to the okalo application.' });
+  res.json({ message: 'Welcome to okalo api.' });
 });
 
-require('./app/routes/user.routes.js')(app);
+// routes
+require('./app/routes/auth.routes')(app);
+require('./app/routes/user.routes')(app);
 
 // set port, listen for requests
-const PORT = process.env.DB_PORT || 3000;
+const PORT = process.env.DB_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+function initial() {
+  Role.create({
+    id: 1,
+    name: 'user',
+  });
+
+  Role.create({
+    id: 2,
+    name: 'moderator',
+  });
+
+  Role.create({
+    id: 3,
+    name: 'admin',
+  });
+}

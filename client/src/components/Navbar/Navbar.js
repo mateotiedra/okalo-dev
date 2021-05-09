@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'none',
     [theme.breakpoints.up('sm')]: {
       display: 'flex',
-      justifyContent: 'space-between',
-      width: 400,
+      gap: theme.spacing(1),
     },
   },
   navContainer: {
@@ -70,20 +69,25 @@ export default function Navbar() {
         className={classes.list}
       >
         <List>
-          {navLinksObj.map((link) => (
-            <ListItem
-              button
-              component={Link}
-              to={link.path}
-              key={link.title}
-              className={classes.listItem}
-            >
-              <ListItemIcon className={classes.listIcon}>
-                <EmojiIcon icon={link.icon} />
-              </ListItemIcon>
-              <ListItemText primary={link.title} />
-            </ListItem>
-          ))}
+          {navLinksObj.map((link) => {
+            if (link.displayed) {
+              return (
+                <ListItem
+                  button
+                  component={Link}
+                  to={link.path}
+                  key={link.title}
+                  className={classes.listItem}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    <EmojiIcon icon={link.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary={link.title} />
+                </ListItem>
+              );
+            }
+            return <React.Fragment key={link.title}></React.Fragment>;
+          })}
           <Divider />
         </List>
       </div>
@@ -106,18 +110,23 @@ export default function Navbar() {
             okalo <EmojiIcon icon='📖' />
           </Typography>
           <div className={classes.navLinks}>
-            {navLinksObj.map((link) => (
-              <React.Fragment key={link.title}>
-                <Button
-                  variant={link.outlined ? 'outlined' : 'text'}
-                  component={Link}
-                  to={link.path}
-                  color='inherit'
-                >
-                  {link.title}
-                </Button>
-              </React.Fragment>
-            ))}
+            {navLinksObj.map((link) => {
+              if (link.displayed) {
+                return (
+                  <React.Fragment key={link.title}>
+                    <Button
+                      variant={link.outlined ? 'outlined' : 'text'}
+                      component={Link}
+                      to={link.path}
+                      color='inherit'
+                    >
+                      {link.title}
+                    </Button>
+                  </React.Fragment>
+                );
+              }
+              return <React.Fragment key={link.title}></React.Fragment>;
+            })}
           </div>
         </Toolbar>
       </AppBar>

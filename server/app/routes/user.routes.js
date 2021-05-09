@@ -1,21 +1,35 @@
-module.exports = (app) => {
-  const user = require('../controllers/user.controller.js');
+const { authJwt } = require('../middleware');
+const controller = require('../controllers/user.controller');
 
-  // Create a new User
-  app.post('/api/signup', user.verifyUsername, user.verifyEmail, user.create);
+module.exports = function (app) {
+  app.use(function (req, res, next) {
+    res.header(
+      'Access-Control-Allow-Headers',
+      'x-access-token, Origin, Content-Type, Accept'
+    );
+    next();
+  });
 
-  // Login the user
-  app.post('/api/login/username', user.loginByUsername);
+  app.get('/api/user/profile', [authJwt.verifyToken], controller.userBoard);
+  app.get(
+    '/api/user/profile/settings',
+    [authJwt.verifyToken],
+    controller.userBoard
+  );
 
-  // Retrieve a single Customer with customerId
-  //app.get('/user/:customerId', user.findOne);
+  app.get('/api/test/all', controller.allAccess);
 
-  // Update a Customer with customerId
-  //app.put('/user/:customerId', user.update);
+  app.get('/api/test/user', [authJwt.verifyToken], controller.userBoard);
 
-  // Delete a Customer with customerId
-  //app.delete('/user/:customerId', user.delete);
+  app.get(
+    '/api/test/mod',
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.moderatorBoard
+  );
 
-  // Create a new Customer
-  //app.delete('/user', user.deleteAll);
+  app.get(
+    '/api/test/admin',
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.adminBoard
+  );
 };

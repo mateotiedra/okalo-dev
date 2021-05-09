@@ -11,8 +11,6 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 export default function PasswordField(props) {
-  useEffect(() => {});
-
   return (
     <FormControl
       variant='outlined'
