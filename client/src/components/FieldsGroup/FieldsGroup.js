@@ -1,49 +1,85 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import { makeStyles, TextField } from '@material-ui/core';
 
 import PasswordField from '../PasswordField/PasswordField';
 import SelectOption from '../SelectOption/SelectOption';
 
-export default function Navbar(props) {
-  const displayField = (field) => {
-    if (!field.displayed) return <></>;
-    if (field.selectOption) {
+const useStyles = makeStyles((theme) => ({
+  hasPreviousComponents: {
+    marginTop: 0,
+  },
+}));
+
+export default function FieldsGroup(props) {
+  const classes = useStyles();
+  const fieldsProps = props.fieldsProps || false;
+  const formik = props.formik || false;
+  if (!formik || !fieldsProps) return <></>;
+
+  const displayField = (fieldRef) => {
+    const field = {
+      ...props.fieldsSchema.fields[fieldRef],
+      props: {
+        ...fieldsProps[fieldRef],
+        fullWidth: true,
+        variant: props.fieldsVariant || 'outlined',
+        margin: 'normal',
+        name: fieldRef,
+        id: fieldRef,
+        key: fieldRef,
+        required:
+          props.fieldsSchema.fields[fieldRef].spec.presence === 'required',
+        value: formik.values[fieldRef],
+        error: formik.touched[fieldRef] && Boolean(formik.errors[fieldRef]),
+        helperText: formik.touched[fieldRef] && formik.errors[fieldRef],
+        onChange: formik.handleChange,
+        className:
+          fieldsProps[fieldRef].previousComponents &&
+          classes.hasPreviousComponents,
+      },
+    };
+
+    if (field.props.selectField && field.props.options) {
       return (
         <SelectOption
-          variant='outlined'
-          fullWidth
-          margin='normal'
-          label='Collège'
-          name={field.name}
-          id={field.id}
-          error={field.error}
+          {...field.props}
+          onChange={(event) => {
+            formik.setFieldValue('school', event.target.value);
+          }}
         >
-          {field.options.map((option, index) => {
-            return <option value={index}>{option}</option>;
+          {field.props.options.map((option, index) => {
+            return <option value={option}>{option}</option>;
           })}
         </SelectOption>
       );
     }
-    if (field.passwordField) {
-      return (
-        <PasswordField
-          fullWidth
-          variant='outlined'
-          margin='normal'
-          {...field}
-        />
-      );
+    if (field.props.passwordField) {
+      return <PasswordField {...field.props} />;
     }
-    return (
-      <TextField
-        variant='outlined'
-        margin='normal'
-        fullWidth
-        key={field.name}
-        {...field}
-      />
-    );
+    return <TextField {...field.props} />;
   };
 
-  return <>{props.fieldsObj.map((field) => displayField(field))}</>;
+  const displayPreviousComponents = (fieldRef) => {
+    return fieldsProps[fieldRef].previousComponents;
+  };
+  const displayNextComponents = (fieldRef) => {
+    return fieldsProps[fieldRef].nextComponents;
+  };
+
+  return (
+    <form onSubmit={formik.handleSubmit} noValidate className={props.className}>
+      {props.fieldsSchema._nodes
+        .map((fieldRef) => {
+          return (
+            <>
+              {displayPreviousComponents(fieldRef)}
+              {displayField(fieldRef)}
+              {displayNextComponents(fieldRef)}
+            </>
+          );
+        })
+        .reverse()}
+      {props.children}
+    </form>
+  );
 }

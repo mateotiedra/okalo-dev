@@ -5,4 +5,5 @@ module.exports = {
   user: process.env.MAIL_USER,
   pass: process.env.MAIL_PASS,
   confRoute: process.env.APP_ORIGIN + '/auth/confirm',
+  resetPasswordRoute: process.env.APP_ORIGIN + '/auth/resetpassword',
 };

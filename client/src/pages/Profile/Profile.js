@@ -30,9 +30,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Profile() {
+function Profile(props) {
+  // eslint-disable-next-line
   const classes = useStyles();
-  const { userData } = ProfileLogic();
+  // eslint-disable-next-line
+  const { displayedUserData, userHimself } = ProfileLogic(props);
 
   return <Container maxWidth='xs'></Container>;
 }

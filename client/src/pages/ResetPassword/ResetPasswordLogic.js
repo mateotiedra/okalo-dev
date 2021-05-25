@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import AppConfig from '../../config/AppConfig';
 
 import Axios from 'axios';
 import FormHelper from '../../helpers/FormHelper';
 
-const AuthConfirmLogic = (props) => {
+const ResetPasswordLogic = (props) => {
   const { API_ORIGIN } = AppConfig();
   const history = props.history;
   const { email } = (props.location && props.location.state) || {};
@@ -14,11 +14,15 @@ const AuthConfirmLogic = (props) => {
   const confirmationCode = props.match.params.confirmationCode;
   const [pageStatus, setPageStatus] = useState(
     `${
-      !confirmationCode || confirmationCode === 'pending'
-        ? 'pending'
+      !confirmationCode || confirmationCode === 'sending'
+        ? 'sendingEmail'
         : 'sending'
     }`
   );
+
+  console.log(pageStatus);
+  const hasFetchedData = useRef(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   const { isEmail } = FormHelper();
 
@@ -32,17 +36,9 @@ const AuthConfirmLogic = (props) => {
     setEmailField({ ...emailField, value: event.target.value });
   };
 
-  const goBackToHome = () => {
-    history.push('/');
-  };
-
-  const goToResendingPage = () => {
-    setPageStatus('resending');
-  };
-
   const sendEmail = () => {
     if (isEmail(emailField.value)) {
-      Axios.post(API_ORIGIN + '/api/auth/resendconfirmationlink', {
+      Axios.post(API_ORIGIN + '/api/auth/sendresetpasswordlink', {
         email: emailField.value,
       })
         .then((res) => {
@@ -56,8 +52,6 @@ const AuthConfirmLogic = (props) => {
               error: true,
               helper: "Cette adresse email n'est attribuée à aucun compte",
             });
-          } else if (err.response.status && err.response.status === 409) {
-            setPageStatus('alreadyActive');
           }
         });
     } else {
@@ -72,46 +66,45 @@ const AuthConfirmLogic = (props) => {
     }
   };
 
+  const goToResendingPage = () => {
+    setPageStatus('sendingEmail');
+  };
+
+  const goBackToHome = () => {
+    history.push('/');
+  };
+
   const pagesData = {
     pending: {
       avatar: '📫',
-      title: 'Check ta boite mail',
-      body: `Nous avons envoyé un email de confirmation${
+      title: 'Email de réinitialisation du mot de passe envoyé !',
+      body: `Tu vas recevoir un mail pour réinitialiser ton mot de passe${
         destinationEmail
-          ? ` à l'adresse :
-         ${destinationEmail}`
+          ? ` à l'adresse suivante :
+         ${destinationEmail} `
           : ''
-      }. Vérifie aussi tes spams si tu le trouves pas.`,
+      }.`,
       ctaButton: {
-        children: 'Recevoir un autre email',
-        onClick: goToResendingPage,
+        children: 'Parfait',
+        onClick: goBackToHome,
       },
     },
     expired: {
       avatar: '⌛',
       title: 'Lien expiré',
-      body: 'Le lien que vous avez suivi a expiré.',
+      body: 'Le lien que vous avez suivi a expiré. Si tu as toujours besoin de réinitialiser ton mot de passe, demandes à en recevoir un nouveau',
       ctaButton: {
         children: 'Recevoir un nouveau lien',
         onClick: goToResendingPage,
       },
     },
-    success: {
-      avatar: '🤸‍♂️',
-      title: 'Inscription terminé',
-      body: `Tu t'es inscrit avec succès ! Ton compte est maintenant prêt à être utilisé.`,
-      ctaButton: {
-        children: 'Super',
-        onClick: goBackToHome,
-      },
-    },
     sending: {
       loading: true,
     },
-    resending: {
+    sendingEmail: {
       avatar: '📧',
-      title: 'Nouveau lien',
-      body: "Donnes nous l'adresse email avec laquelle tu t'es inscrit afin de recevoir un nouveau lien de confirmation.",
+      title: 'Réinitialiser ton mot de passe',
+      body: "Entres l'adresse email qui est associé à ton compte.",
       emailField: {
         name: 'email',
         id: 'email',
@@ -131,42 +124,36 @@ const AuthConfirmLogic = (props) => {
         onClick: sendEmail,
       },
     },
-    alreadyActive: {
-      avatar: '🏃',
-      title: 'Déjà confirmé',
-      body: `L'adresse email${
-        destinationEmail ? ` : ${destinationEmail}` : ''
-      } a déjà été confirmée !`,
-      ctaButton: {
-        children: 'Se connecter',
-        onClick: goBackToHome,
-      },
-    },
   };
 
   useEffect(() => {
+    if (hasFetchedData.current) return;
+    hasFetchedData.current = true;
+
     const updatePageStatus = () => {
-      Axios.post(API_ORIGIN + '/api/auth/confirm/' + confirmationCode)
+      Axios.post(API_ORIGIN + '/api/auth/resetpassword/' + confirmationCode)
         .then((res) => {
           localStorage.setItem('accessToken', res.data.accessToken);
-          setPageStatus('success');
+          history.push('/accounts/edit/password');
+          setPageLoaded(true);
         })
         .catch((err) => {
           console.log(err);
           if (err.response && err.response.status === 404) {
             setPageStatus('expired');
+            setPageLoaded(true);
             return;
           }
-          console.log(err);
         });
     };
 
     if (pageStatus === 'sending' && confirmationCode) updatePageStatus();
+    else setPageLoaded(true);
   }, [API_ORIGIN, history, pageStatus, confirmationCode]);
 
   const pageData = pagesData[pageStatus];
 
-  return { pageStatus, pageData };
+  return { pageStatus, pageData, pageLoaded };
 };
 
-export default AuthConfirmLogic;
+export default ResetPasswordLogic;

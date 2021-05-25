@@ -1,33 +1,66 @@
 import Axios from 'axios';
-import { useHistory } from 'react-router';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const ProfileLogic = () => {
-  const history = useHistory();
+import AppConfig from '../../config/AppConfig';
 
-  const getUserData = () => {
-    Axios.get('http://localhost:8080/api/user/profile', {
-      headers: {
-        'x-access-token': localStorage.getItem('accessToken'),
-      },
-    })
-      .then((res) => {
-        console.log(res.data);
-        return res.data.user;
+const ProfileLogic = (props) => {
+  const { API_ORIGIN } = AppConfig();
+  const history = props.history;
+  const profileUsername = props.match.params.username;
+
+  const [displayedUserData, setDisplayedUserData] = useState();
+  const [userHimself, setUserHimself] = useState(false);
+
+  const hasFetchedData = useRef(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (hasFetchedData.current) return;
+    hasFetchedData.current = true;
+
+    const getUserData = (next) => {
+      Axios.get(API_ORIGIN + '/api/user/u', {
+        headers: {
+          'x-access-token': localStorage.getItem('accessToken'),
+        },
       })
-      .catch((err) => {
-        console.log(err);
-        history.push('/auth');
-        return {};
-      });
-  };
+        .then((res) => {
+          console.log(res.data);
+          next(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (profileUsername === 'u') history.push('/auth/login');
+          next(false);
+        });
+    };
 
-  const [userData, setUserData] = useState(() => {
-    const initialState = getUserData();
-    return initialState;
-  });
+    const getDisplayedUserData = () => {
+      Axios.get(+'/api/user/' + profileUsername)
+        .then((res) => {
+          setPageLoaded(true);
+          return { ...res.data };
+        })
+        .catch((err) => {
+          console.log(err);
+          return {};
+        });
+    };
 
-  return { userData, setUserData };
+    getUserData((userData) => {
+      if (
+        userData &&
+        (profileUsername === 'u' || userData.username === profileUsername)
+      ) {
+        history.push('/users/' + userData.username);
+        setDisplayedUserData(userData);
+        setUserHimself(true);
+        setPageLoaded(true);
+      } else setDisplayedUserData(getDisplayedUserData());
+    });
+  }, [API_ORIGIN, history, profileUsername]);
+
+  return { displayedUserData, userHimself, pageLoaded };
 };
 
 export default ProfileLogic;

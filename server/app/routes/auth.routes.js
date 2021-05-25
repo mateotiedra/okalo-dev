@@ -30,8 +30,18 @@ module.exports = function (app) {
 
   app.post(
     '/api/auth/resendconfirmationlink',
-    controller.resendConfirmationEmail
+    controller.sendConfirmationEmail('confirmEmail')
   );
 
   app.post('/api/auth/signin', controller.signin);
+
+  app.post(
+    '/api/auth/resetpassword/:confirmationCode',
+    controller.verifyuserConfirmation
+  );
+
+  app.post(
+    '/api/auth/sendresetpasswordlink',
+    controller.sendConfirmationEmail('resetPassword')
+  );
 };

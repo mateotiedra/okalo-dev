@@ -10,7 +10,10 @@ module.exports = function (app) {
     next();
   });
 
-  app.get('/api/user/profile', [authJwt.verifyToken], controller.userBoard);
+  app.get('/api/user/u', [authJwt.verifyToken], controller.userBoard);
+  app.get('/api/user/:username', controller.otherUserBoard);
+
+  // Examples routes
   app.get(
     '/api/user/profile/settings',
     [authJwt.verifyToken],

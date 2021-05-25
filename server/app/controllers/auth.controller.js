@@ -93,40 +93,59 @@ exports.signin = (req, res) => {
     });
 };
 
-exports.resendConfirmationEmail = (req, res) => {
-  User.findOne({
-    where: {
-      email: req.body.email,
-    },
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'User Not found.' });
-      }
-
-      user.confirmationCode = getNewConfCode(user.username);
-      user.save((err) => {
-        if (err) {
-          return res.status(500).send({ message: err });
-        }
-      });
-
-      nodemailer.sendConfirmationEmail(
-        user.username,
-        user.email,
-        user.confirmationCode
-      );
-      res
-        .status(200)
-        .send({ message: 'New email sent', destinationEmail: user.email });
+exports.sendConfirmationEmail =
+  (purpose = 'confirmEmail') =>
+  (req, res) => {
+    const resetPassord = purpose === 'resetPassword';
+    User.findOne({
+      where: {
+        email: req.body.email,
+      },
     })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
-};
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({ message: 'User Not found.' });
+        }
+
+        if (!resetPassord && user.status !== 'pending') {
+          return res.status(409).send({ message: 'User is already active.' });
+        }
+
+        user.confirmationCode = getNewConfCode(user.username);
+        user.save((err) => {
+          if (err) {
+            return res.status(500).send({ message: err });
+          }
+        });
+
+        if (resetPassord) {
+          nodemailer.sendResetPasswordEmail(
+            user.username,
+            user.email,
+            user.confirmationCode
+          );
+          res.status(200).send({
+            message: 'Email to reset password sent',
+            destinationEmail: user.email,
+          });
+        } else {
+          nodemailer.sendConfirmationEmail(
+            user.username,
+            user.email,
+            user.confirmationCode
+          );
+          res
+            .status(200)
+            .send({ message: 'New email sent', destinationEmail: user.email });
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  };
 
 exports.verifyuserConfirmation = (req, res) => {
-  let confirmationCode = req.params.confirmationCode;
+  const confirmationCode = req.params.confirmationCode;
   if (!confirmationCode) {
     return res.status(403).send({
       message: 'No confirmation code provided!',
@@ -141,7 +160,10 @@ exports.verifyuserConfirmation = (req, res) => {
         return res.status(404).send({ message: 'User Not found.' });
       }
 
-      user.status = 'active';
+      if (user.status === 'pending') {
+        user.status = 'active';
+      }
+      user.confirmationCode = getNewConfCode(user.username);
       user.save((err) => {
         if (err) {
           return res.status(500).send({ message: err });

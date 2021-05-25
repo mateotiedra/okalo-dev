@@ -26,7 +26,7 @@ const NavbarLogic = () => {
       displayed: true,
     },
     {
-      title: 'Connexion',
+      title: 'Se connecter',
       icon: '👤',
       path: '/auth/login',
       displayed: !loggedIn,
@@ -40,13 +40,13 @@ const NavbarLogic = () => {
     {
       title: 'Paramètre',
       icon: '⚙️',
-      path: '/auth',
+      path: '/accounts/edit',
       displayed: loggedIn,
     },
     {
       title: 'Mes annonces',
       icon: '💸',
-      path: '/profile',
+      path: '/users/u',
       displayed: loggedIn,
     },
     {

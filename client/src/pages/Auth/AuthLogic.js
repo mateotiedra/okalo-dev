@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Axios from 'axios';
-
-import FormHelper from '../../helpers/FormHelper';
 
 const AuthLogic = (props) => {
   // Frontend
@@ -18,7 +19,7 @@ const AuthLogic = (props) => {
 
   const switchSignIn = () => {
     history.push(`/auth/${displaySignIn ? 'signup' : 'login'}`);
-    setErrors(defaultErrors);
+    //setErrors(defaultErrors);
     setDisplaySignIn(!displaySignIn);
   };
 
@@ -34,333 +35,197 @@ const AuthLogic = (props) => {
 
   const onMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Logic
-  const [authValues, setAuthValues] = useState({
-    email: '',
-    username: '',
-    fullname: '',
-    school: '',
-    phone: '',
-    password: '',
-    passwordConf: '',
-    emailOrUsername: '',
+  // Connection to the api
+  const signup = (values) => {
+    Axios.post('http://localhost:8080/api/auth/signup', {
+      email: values.email,
+      username: values.username,
+      school: values.school,
+      password: values.password,
+    })
+      .then((res) => {
+        values.emailOrUsername = values.email;
+        signin(values);
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 400) {
+          if (!err.response.data.message) return;
+
+          if (err.response.data.message.includes('Username')) {
+            formik.setFieldError(
+              'username',
+              "Ce nom d'utilisateur est déjà utilisé"
+            );
+          } else if (err.response.data.message.includes('Email')) {
+            formik.setFieldError(
+              'email',
+              'Cette adresse email est déjà utilisée'
+            );
+          }
+        } else {
+          console.log(err);
+        }
+      });
+  };
+
+  const signin = (values) => {
+    const emailLogin = values.emailOrUsername.includes('@');
+
+    var emailOrUsername = values.emailOrUsername;
+    if (values.emailOrUsername.length < 1) {
+      emailOrUsername = values.username;
+    }
+
+    Axios.post('http://localhost:8080/api/auth/signin', {
+      emailOrUsername: emailOrUsername,
+      password: values.password,
+    })
+      .then((response) => {
+        localStorage.setItem('accessToken', response.data.accessToken);
+        history.push('/');
+      })
+      .catch((err) => {
+        if (err.response.status === 404) {
+          formik.setFieldError(
+            'emailOrUsername',
+            `${
+              emailLogin
+                ? "L'adresse email entrée"
+                : "Le nom d'utilisateur entré"
+            } n'appartient à aucun compte`
+          );
+        } else if (
+          err.response.status === 401 &&
+          err.response.data.message.includes('Password')
+        ) {
+          //updateError('password', 'Mot de passe incorrect');
+        } else if (
+          err.response.status === 401 &&
+          err.response.data.message.includes('Email')
+        ) {
+          history.push({
+            pathname: '/auth/confirm/pending',
+            state: { email: err.response.data.destinationEmail },
+          });
+        }
+      });
+  };
+
+  // Form managment
+  const signupSchema = yup.object({
+    email: yup
+      .string('Entres ton adresse email')
+      .email('Adresse email invalide')
+
+      .required("N'oublies pas de donner ton adresse email"),
+    username: yup
+      .string("Entres ton nom d'utilisateur")
+      .min(4, "Ton nom d'utilisateur doit avoir au minimum 4 caractères")
+      .max(15, "Ton nom d'utilisateur peut avoir au maximum 15 caractères")
+      .matches(
+        /^[a-zA-Z0-9_.-]*$/,
+        "Les espaces et les charactères spéciaux ne sont pas autorisés (sauf le point, l'underscore et le tiret)"
+      )
+      .required("N'oublies pas de donner ton nom d'utilisateur"),
+    school: yup.string(),
+    password: yup
+      .string('Entres ton mot de passe')
+      .matches(/[^ ]/, 'Ton mot de passe ne peut pas contenir despace')
+      .min(6, 'Le mot de passe doit avoir au minimum 6 caractères')
+      .max(20, 'Le mot de passe ne peut pas avoir plus de 20 caractères')
+      .required("N'oublies pas de donner ton mot de passe"),
+    passwordConf: yup
+      .string()
+      .oneOf(
+        [yup.ref('password'), null],
+        'Le mot de passe de confirmation ne correspond pas'
+      )
+      .required("N'oublies pas de confirmer ton mot de passe"),
   });
 
-  const updateAuthValue = (prop) => (event) => {
-    setAuthValues({ ...authValues, [prop]: event.target.value });
-  };
+  const signinSchema = yup.object({
+    emailOrUsername: yup
+      .string()
+      .matches(
+        /^[a-zA-Z0-9_.-@]*$/,
+        "Adresse email ou nom d'utilisateur invalide"
+      )
+      .required(
+        "N'oublies pas de donner ton nom d'utilisateur ou ton adresse email"
+      ),
+    password: yup
+      .string('Entres ton mot de passe')
+      .min(6, 'Le mot de passe doit avoir au minimum 6 caractères')
+      .required("N'oublies pas de donner ton mot de passe"),
+  });
 
-  const defaultErrors = {
-    email: false,
-    emailHelper: '',
-    username: false,
-    usernameHelper: '',
-    fullname: false,
-    fullnameHelper: '',
-    password: false,
-    passwordHelper: '',
-    passwordConf: false,
-    passwordConfHelper: '',
-    emailOrUsername: false,
-    emailOrUsernameHelper: '',
-  };
+  const fieldsSchema = displaySignIn ? signinSchema : signupSchema;
 
-  const [errors, setErrors] = useState(defaultErrors);
-
-  const updateError = (errorName, newMess, newState = true) => {
-    setErrors({
-      ...errors,
-      [errorName]: newState,
-      [errorName + 'Helper']: newMess,
-    });
-  };
-
-  const signup = () => {
-    if (checkAuthValues()) {
-      Axios.post('http://localhost:8080/api/auth/signup', {
-        email: authValues.email,
-        fullname: authValues.fullname,
-        username: authValues.username,
-        school: authValues.school,
-        phone: authValues.phone,
-        password: authValues.password,
-      })
-        .then((res) => {
-          signin();
-        })
-        .catch((err) => {
-          if (err.response && err.response.status === 400) {
-            var newErrors = errors;
-            if (!err.response.data.message) return;
-
-            if (err.response.data.message.includes('Username')) {
-              newErrors['username'] = true;
-              newErrors['usernameHelper'] =
-                "Ce nom d'utilisateur est déjà utilisé";
-            }
-            if (err.response.data.message.includes('Email')) {
-              newErrors['email'] = true;
-              newErrors['emailHelper'] =
-                'Cette adresse email est déjà utilisée';
-            }
-            setErrors(newErrors);
-          } else {
-            console.log(err);
-          }
-        });
-    }
-  };
-
-  const signin = () => {
-    if (checkAuthValues()) {
-      const emailLogin = isEmail(authValues.emailOrUsername);
-
-      var emailOrUsername = authValues.emailOrUsername;
-      if (authValues.emailOrUsername.length < 1) {
-        emailOrUsername = authValues.username;
-      }
-
-      Axios.post('http://localhost:8080/api/auth/signin', {
-        emailOrUsername: emailOrUsername,
-        password: authValues.password,
-      })
-        .then((response) => {
-          localStorage.setItem('accessToken', response.data.accessToken);
-          history.push('/');
-        })
-        .catch((err) => {
-          if (err.response.status === 404) {
-            updateError(
-              'emailOrUsername',
-              `${
-                emailLogin
-                  ? "L'adresse email entrée"
-                  : "Le nom d'utilisateur entré"
-              } n'appartient à aucun compte`
-            );
-          } else if (
-            err.response.status === 401 &&
-            err.response.data.message.includes('Password')
-          ) {
-            updateError('password', 'Mot de passe incorrect');
-          } else if (
-            err.response.status === 401 &&
-            err.response.data.message.includes('Email')
-          ) {
-            history.push({
-              pathname: '/auth/confirm/pending',
-              state: { email: err.response.data.destinationEmail },
-            });
-          }
-        });
-    }
-  };
-
-  const { isEmail } = FormHelper();
-
-  const checkAuthValues = () => {
-    var allGood = true;
-
-    // Check if any field is empty
-    var newErrors = errors;
-
-    fieldsObj.forEach((field) => {
-      if (
-        field.required &&
-        field.displayed &&
-        authValues[field.name] !== undefined
-      ) {
-        if (authValues[field.name].length === 0) {
-          // Check if the field is empty
-          newErrors[field.name] = true;
-          newErrors[field.name + 'Helper'] = '';
-          allGood = false;
-        } else if (
-          // If The field has another error
-          newErrors[field.name] &&
-          newErrors[field.name + 'Helper'].length > 0 &&
-          !newErrors[field.name + 'Helper'].includes('utilisé')
-        ) {
-          allGood = false;
-        } else {
-          // Otherwise it removes the error
-          newErrors[field.name] = false;
-          newErrors[field.name + 'Helper'] = '';
-        }
+  const formik = useFormik({
+    initialValues: displaySignIn
+      ? { emailOrUsername: '', password: '' }
+      : { email: '', username: '', school: '', password: '', passwordConf: '' },
+    validationSchema: fieldsSchema,
+    onSubmit: (values) => {
+      if (displaySignIn) {
+        signin(values);
       } else {
-        newErrors[field.name] = false;
+        signup(values);
       }
-    });
+    },
+  });
 
-    // If the page is on signup mode
-    if (!displaySignIn) {
-      // Basic check of the email
-      if (!newErrors.email && !isEmail(authValues.email)) {
-        newErrors.email = true;
-        newErrors.emailHelper = "L'adresse email est invalide";
-        allGood = false;
-      } else if (!newErrors.email) {
-        newErrors.email = false;
-        newErrors.emailHelper = '';
-      }
-    }
-
-    setErrors({
-      ...newErrors,
-    });
-
-    return allGood;
-  };
-
-  const checkPasswordValidity = ({ password, passwordConf }) => {
-    var newErrors = errors;
-
-    if (password === passwordConf) {
-      newErrors.passwordConf = false;
-      newErrors.passwordConfHelper = '';
-    } else {
-      newErrors.passwordConf = true;
-      newErrors.passwordConfHelper =
-        'La confirmation ne correspond pas au mot de passe';
-    }
-
-    // Check password
-    if (!password.match('^[a-zA-Z0-9_.-]*$')) {
-      newErrors.password = true;
-      newErrors.passwordHelper =
-        "Les espaces et les charactères spéciaux ne sont pas autorisés (sauf le point, l'underscore et le tiret)";
-    } else if (password.length < 6) {
-      newErrors.password = true;
-      newErrors.passwordHelper =
-        'Le mot de passe doit contenir au moins 6 charactères';
-    } else {
-      newErrors.password = false;
-      newErrors.passwordHelper = '';
-    }
-
-    setErrors(newErrors);
-  };
-
-  const updatePassword = (prop) => (event) => {
-    var passwordValus = {
-      password: authValues.password,
-      passwordConf: authValues.passwordConf,
-    };
-    passwordValus[prop] = event.target.value;
-    checkPasswordValidity(passwordValus);
-    setAuthValues({ ...authValues, [prop]: event.target.value });
-  };
-
-  // The fieldsObj
-  const fieldsObj = [
-    {
-      name: 'email',
-      id: 'email',
+  const fieldsProps = {
+    email: {
       label: 'Adresse email',
-      autoComplete: 'email',
-      value: authValues.email,
       autoFocus: !onMobile,
-      error: errors.email,
-      helperText: errors.emailHelper,
-      required: true,
-      displayed: !displaySignIn,
-      onChange: updateAuthValue('email'),
+      autoComplete: 'email',
     },
-    {
-      name: 'username',
-      id: 'username',
+    username: {
       label: "Nom d'utilisateur",
-      value: authValues.username,
-      error: errors.username,
-      helperText: errors.usernameHelper,
-      required: true,
-      displayed: !displaySignIn,
-      onChange: updateAuthValue('username'),
     },
-    {
-      name: 'emailOrUsername',
-      id: 'emailOrUsername',
+    emailOrUsername: {
       label: "Adresse email ou nom d'utilisateur",
       autoComplete: 'email',
-      value: authValues.emailOrUsername,
-      error: errors.emailOrUsername,
-      helperText: errors.emailOrUsernameHelper,
       autoFocus: !onMobile,
-      required: true,
-      displayed: displaySignIn,
-      onChange: updateAuthValue('emailOrUsername'),
     },
-    {
-      name: 'fullname',
-      id: 'fullname',
-      label: 'Nom complet',
-      autoComplete: 'name',
-      value: authValues.fullname,
-      error: errors.fullname,
-      helperText: errors.fullnameHelper,
-      required: true,
-      displayed: !displaySignIn,
-      onChange: updateAuthValue('fullname'),
-    },
-    {
-      name: 'phone',
-      id: 'phone',
-      label: 'Numéro de téléphone',
-      autoComplete: 'tel',
-      value: authValues.phone,
-      error: errors.phone,
-      displayed: !displaySignIn,
-      onChange: updateAuthValue('phone'),
-    },
-    {
-      name: 'school',
-      selectOption: true,
-      id: 'school',
+    school: {
       label: 'Collège',
-      value: authValues.school,
-      error: errors.school,
-      autoComplete: 'tel',
-      options: ['Saussure', 'Andrée-Chavanne', 'Sismondi'],
-      displayed: !displaySignIn,
-      onChange: updateAuthValue('school'),
+      selectField: true,
+      options: ['De Saussure', 'Andrée Chavanne', 'Sismondi'],
     },
-    {
-      name: 'password',
+    password: {
       passwordField: true,
-      id: 'password',
       label: 'Mot de passe',
       labelWidth: 110,
       showPassword: showPassword,
       handleClickShowPassword: handleClickShowPassword,
       handleMouseDownPassword: handleMouseDownPassword,
-      password: authValues.password,
-      value: authValues.password,
-      onChange: updatePassword('password'),
-      error: errors.password,
-      helperText: errors.passwordHelper,
-      required: true,
-      displayed: true,
     },
-    {
-      name: 'passwordConf',
+    passwordConf: {
       passwordField: true,
-      id: 'passwordConf',
       label: 'Confirmer mot de passe',
       labelWidth: 185,
       showPassword: showPassword,
       handleClickShowPassword: handleClickShowPassword,
       handleMouseDownPassword: handleMouseDownPassword,
-      password: authValues.passwordConf,
-      onChange: updatePassword('passwordConf'),
-      value: authValues.passwordConf,
-      error: errors.passwordConf,
-      helperText: errors.passwordConfHelper,
-      required: true,
-      displayed: !displaySignIn,
     },
-  ];
+  };
 
-  return { fieldsObj, displaySignIn, switchSignIn, signup, signin };
+  const goToResetPasswordPage = () => {
+    history.push('/auth/resetpassword/sending');
+  };
+
+  return {
+    fieldsSchema,
+    fieldsProps,
+    formik,
+    displaySignIn,
+    switchSignIn,
+    signup,
+    signin,
+    goToResetPasswordPage,
+  };
 };
 
 export default AuthLogic;

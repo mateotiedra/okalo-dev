@@ -6,7 +6,9 @@ import { CssBaseline } from '@material-ui/core';
 import Home from './pages/Home/Home';
 import Auth from './pages/Auth/Auth';
 import AuthConfirm from './pages/AuthConfirm/AuthConfirm';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Profile from './pages/Profile/Profile';
+import Accounts from './pages/Accounts/Accounts';
 import Help from './pages/Help/Help';
 import Contact from './pages/Contact/Contact';
 import Sell from './pages/Sell/Sell';
@@ -25,7 +27,14 @@ function App() {
             exact
             component={AuthConfirm}
           />
-          <Route path='/profile' exact component={Profile} />
+          <Route
+            path='/auth/resetpassword/:confirmationCode'
+            exact
+            component={ResetPassword}
+          />
+          <Route path='/users/:username' exact component={Profile} />
+          <Route path='/accounts/edit' exact component={Accounts} />
+          <Route path='/accounts/edit/:what' exact component={Accounts} />
           <Route path='/help' exact component={Help} />
           <Route path='/contact' exact component={Contact} />
           <Route path='/sell' exact component={Sell} />

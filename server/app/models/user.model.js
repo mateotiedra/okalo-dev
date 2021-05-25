@@ -15,6 +15,12 @@ module.exports = (sequelize, Sequelize) => {
     phone: {
       type: Sequelize.STRING,
     },
+    insta: {
+      type: Sequelize.STRING,
+    },
+    snap: {
+      type: Sequelize.STRING,
+    },
     school: {
       type: Sequelize.STRING,
     },
@@ -22,9 +28,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       defaultValue: 'pending',
     },
-    confirmationCode:{
+    confirmationCode: {
       type: Sequelize.STRING,
-    }
+    },
   });
 
   return User;

@@ -1,4 +1,4 @@
-const FormHelper = (props) => {
+const FormHelper = () => {
   const isEmail = (testedEmail) => {
     return (
       testedEmail.includes('@') &&

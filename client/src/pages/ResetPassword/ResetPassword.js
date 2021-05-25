@@ -2,11 +2,15 @@ import React from 'react';
 
 import { TextField } from '@material-ui/core';
 
-import AuthConfirmLogic from './AuthConfirmLogic';
+import ResetPasswordLogic from './ResetPasswordLogic';
 import AlertPage from '../../components/AlertPage/AlertPage';
 
-function AuthConfirm(props) {
-  const { pageData } = AuthConfirmLogic(props);
+function ResetPassword(props) {
+  const { pageData, pageLoaded } = ResetPasswordLogic(props);
+
+  if (!pageLoaded) {
+    return <></>;
+  }
 
   return (
     <AlertPage {...pageData}>
@@ -22,4 +26,4 @@ function AuthConfirm(props) {
   );
 }
 
-export default AuthConfirm;
+export default ResetPassword;

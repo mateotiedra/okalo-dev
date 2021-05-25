@@ -1,47 +1,56 @@
-import { useEffect } from 'react';
 import {
-  OutlinedInput,
+  Input,
   FormControl,
   IconButton,
   InputAdornment,
   InputLabel,
   FormHelperText,
+  OutlinedInput,
 } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 export default function PasswordField(props) {
+  const inputProps = {
+    id: props.name,
+    type: props.showPassword ? 'text' : 'password',
+    value: props.value,
+    onChange: props.onChange,
+    ...props.InputProps,
+    endAdornment: (
+      <InputAdornment position='end'>
+        {props.variant === 'outlined' && (
+          <IconButton
+            aria-label='toggle password visibility'
+            onClick={props.handleClickShowPassword}
+            onMouseDown={props.handleMouseDownPassword}
+            edge='end'
+          >
+            {props.showPassword ? <Visibility /> : <VisibilityOff />}
+          </IconButton>
+        )}
+      </InputAdornment>
+    ),
+  };
+
   return (
     <FormControl
-      variant='outlined'
+      variant={props.variant || 'outlined'}
       fullWidth={props.fullWidth}
       margin={props.margin}
-      required
+      required={props.required}
       size={props.size}
       error={props.error}
+      key={props.key}
     >
       <InputLabel htmlFor={'outlined-adornment' + props.name}>
         {props.label}
       </InputLabel>
-      <OutlinedInput
-        id={'outlined-adornment' + props.name}
-        type={props.showPassword ? 'text' : 'password'}
-        value={props.password}
-        onChange={props.onChange}
-        endAdornment={
-          <InputAdornment position='end'>
-            <IconButton
-              aria-label='toggle password visibility'
-              onClick={props.handleClickShowPassword}
-              onMouseDown={props.handleMouseDownPassword}
-              edge='end'
-            >
-              {props.showPassword ? <Visibility /> : <VisibilityOff />}
-            </IconButton>
-          </InputAdornment>
-        }
-        labelWidth={props.labelWidth}
-      />
+      {props.variant === 'outlined' ? (
+        <OutlinedInput {...inputProps} labelWidth={props.labelWidth} />
+      ) : (
+        <Input {...inputProps} />
+      )}
       <FormHelperText id={props.name + '-helper-text'}>
         {props.helperText}
       </FormHelperText>

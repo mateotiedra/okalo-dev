@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    [theme.breakpoints.down('sm')]: { padding: theme.spacing(0, 2, 0, 2) },
+    [theme.breakpoints.down('sm')]: { padding: theme.spacing(7, 2, 2, 2) },
+    padding: theme.spacing(5, 0, 2, 0),
   },
   goBackButton: {
     position: 'absolute',
@@ -29,7 +30,11 @@ export default function MobileContainer(props) {
   const history = useHistory();
 
   const goBack = () => {
-    history.push(props.backRoute || '/');
+    console.log(props.mustGoBack);
+    if (props.goBackLink) {
+      history.push(props.goBackLink);
+      history.go(0);
+    } else history.push('/');
   };
 
   return (

@@ -16,6 +16,7 @@ export default function PasswordField(props) {
       margin={props.margin}
       backgroundColor='transparent'
       size={props.size}
+      key={props.key}
     >
       <InputLabel htmlFor='outlined-age-native-simple'>
         {props.label}
@@ -23,8 +24,8 @@ export default function PasswordField(props) {
       <Select
         native
         value={props.value}
-        onChange={props.handleChange}
         label={props.label}
+        onChange={props.onChange}
         inputProps={{
           name: selectName,
           id: props.variant + '-' + selectName + '-native-simple',

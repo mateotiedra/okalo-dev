@@ -25,10 +25,10 @@ export default function AlertPage(props) {
   const classes = useStyles();
 
   return (
-    <MobileContainer maxWidth='xs'>
+    <MobileContainer maxWidth='xs' goBackLink={props.goBackLink}>
       {props.avatar && (
         <Box className={classes.avatar}>
-          <EmojiIcon icon={props.avatar} size={100} />
+          <EmojiIcon icon={props.avatar} size={props.avatarSize || 100} />
         </Box>
       )}
       {props.title && (

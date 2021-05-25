@@ -3,14 +3,7 @@
 //import Axios from 'axios';
 
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-  Link,
-  Grid,
-  Box,
-  Typography,
-  Container,
-} from '@material-ui/core';
+import { Button, Link, Grid, Box, Typography } from '@material-ui/core';
 import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
@@ -23,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -34,9 +26,14 @@ const useStyles = makeStyles((theme) => ({
 function Auth(props) {
   const classes = useStyles();
 
-  const { fieldsObj, displaySignIn, switchSignIn, signup, signin } = AuthLogic(
-    props
-  );
+  const {
+    fieldsSchema,
+    fieldsProps,
+    formik,
+    displaySignIn,
+    switchSignIn,
+    goToResetPasswordPage,
+  } = AuthLogic(props);
 
   return (
     <MobileContainer>
@@ -47,22 +44,29 @@ function Auth(props) {
         {displaySignIn ? 'Connexion' : 'Inscription'}
       </Typography>
       <Box noValidate className={classes.form}>
-        <FieldsGroup fieldsObj={fieldsObj} />
-        <Button
-          type='submit'
-          fullWidth
-          variant='contained'
-          color='primary'
-          className={classes.submit}
-          onClick={displaySignIn ? signin : signup}
+        <FieldsGroup
+          fieldsSchema={fieldsSchema}
+          fieldsProps={fieldsProps}
+          formik={formik}
         >
-          {displaySignIn ? 'Se connecter' : "S'inscrire"}
-        </Button>
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            color='primary'
+            className={classes.submit}
+          >
+            {displaySignIn ? 'Se connecter' : "S'inscrire"}
+          </Button>
+        </FieldsGroup>
+
         <Grid container>
           <Grid item xs>
-            <Link href='#' variant='body2'>
-              Mot de passe oublié ?
-            </Link>
+            {displaySignIn && (
+              <Link variant='body2' onClick={goToResetPasswordPage}>
+                Mot de passe oublié ?
+              </Link>
+            )}
           </Grid>
           <Grid item>
             <Link
