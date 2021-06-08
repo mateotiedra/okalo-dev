@@ -98,7 +98,7 @@ const AuthLogic = (props) => {
           err.response.status === 401 &&
           err.response.data.message.includes('Password')
         ) {
-          //updateError('password', 'Mot de passe incorrect');
+          formik.setFieldError('password', 'Mot de passe incorrect');
         } else if (
           err.response.status === 401 &&
           err.response.data.message.includes('Email')

@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   title: {
+    color: 'black',
     fontWeight: 'bold',
     [theme.breakpoints.up('sm')]: {},
   },
@@ -50,12 +51,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Navbar() {
   const classes = useStyles();
 
-  const {
-    navDrawerOpen,
-    openNavDrawer,
-    closeNavDrawer,
-    navLinksObj,
-  } = NavbarLogic();
+  const { navDrawerOpen, openNavDrawer, closeNavDrawer, navLinksObj } =
+    NavbarLogic();
 
   const navDrawer = (
     <SwipeableDrawer
@@ -106,8 +103,13 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h5' className={classes.title}>
-            okalo <EmojiIcon icon='📖' />
+          <Typography
+            variant='h5'
+            className={classes.title}
+            component={Link}
+            to={'/'}
+          >
+            okalo
           </Typography>
           <div className={classes.navLinks}>
             {navLinksObj.map((link) => {

@@ -16,7 +16,7 @@ export default function FieldsGroup(props) {
   const formik = props.formik || false;
   if (!formik || !fieldsProps) return <></>;
 
-  const displayField = (fieldRef) => {
+  const displayField = (fieldRef, index) => {
     const field = {
       ...props.fieldsSchema.fields[fieldRef],
       props: {
@@ -26,7 +26,7 @@ export default function FieldsGroup(props) {
         margin: 'normal',
         name: fieldRef,
         id: fieldRef,
-        key: fieldRef,
+        key: fieldRef + '-' + index,
         required:
           props.fieldsSchema.fields[fieldRef].spec.presence === 'required',
         value: formik.values[fieldRef],
@@ -43,18 +43,19 @@ export default function FieldsGroup(props) {
       return (
         <SelectOption
           {...field.props}
+          keyName={field.props.key}
           onChange={(event) => {
-            formik.setFieldValue('school', event.target.value);
+            formik.setFieldValue(fieldRef, event.target.value);
           }}
         >
-          {field.props.options.map((option, index) => {
+          {field.props.options.map((option) => {
             return <option value={option}>{option}</option>;
           })}
         </SelectOption>
       );
     }
     if (field.props.passwordField) {
-      return <PasswordField {...field.props} />;
+      return <PasswordField {...field.props} keyName={field.props.key} />;
     }
     return <TextField {...field.props} />;
   };
@@ -69,11 +70,11 @@ export default function FieldsGroup(props) {
   return (
     <form onSubmit={formik.handleSubmit} noValidate className={props.className}>
       {props.fieldsSchema._nodes
-        .map((fieldRef) => {
+        .map((fieldRef, index) => {
           return (
             <>
               {displayPreviousComponents(fieldRef)}
-              {displayField(fieldRef)}
+              {displayField(fieldRef, index)}
               {displayNextComponents(fieldRef)}
             </>
           );

@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     marginBottom: theme.spacing(4),
   },
+  avatarSmallerSpace: {
+    marginBottom: theme.spacing(1),
+  },
   title: {
     marginBottom: theme.spacing(3),
     fontWeight: 'bold',
@@ -24,11 +27,21 @@ const useStyles = makeStyles((theme) => ({
 export default function AlertPage(props) {
   const classes = useStyles();
 
+  const avatarSize = props.avatarSize || (props.longAlert ? 37 : 100);
+
   return (
-    <MobileContainer maxWidth='xs' goBackLink={props.goBackLink}>
+    <MobileContainer
+      maxWidth='xs'
+      goBackLink={props.goBackLink}
+      goBackFunc={props.goBackFunc}
+    >
       {props.avatar && (
-        <Box className={classes.avatar}>
-          <EmojiIcon icon={props.avatar} size={props.avatarSize || 100} />
+        <Box
+          className={
+            props.longAlert ? classes.avatarSmallerSpace : classes.avatar
+          }
+        >
+          <EmojiIcon icon={props.avatar} size={avatarSize} />
         </Box>
       )}
       {props.title && (

@@ -27,8 +27,56 @@ const AccountsLogic = (props) => {
     event.preventDefault();
   };
 
+  const [changeSuccess, setChangeSuccess] = useState(false);
+
   const saveNewValues = (values) => {
-    console.log(values);
+    Axios.post(
+      API_ORIGIN + '/api/user/settings',
+      {
+        fullname: values.fullname,
+        insta: values.insta,
+        phone: values.phone,
+        school: values.school,
+        snap: values.snap,
+      },
+      {
+        headers: {
+          'x-access-token': localStorage.getItem('accessToken'),
+        },
+      }
+    )
+      .then((res) => {
+        setChangeSuccess(true);
+      })
+      .catch((err) => {
+        if (err.response.status && err.response.status === 304) {
+        } else {
+          console.log(err);
+        }
+      });
+  };
+
+  const saveNewPassword = (values) => {
+    Axios.post(
+      API_ORIGIN + '/api/user/settings',
+      {
+        password: values.password,
+      },
+      {
+        headers: {
+          'x-access-token': localStorage.getItem('accessToken'),
+        },
+      }
+    )
+      .then((res) => {
+        setChangeSuccess(true);
+      })
+      .catch((err) => {
+        if (err.response.status && err.response.status === 304) {
+        } else {
+          console.log(err);
+        }
+      });
   };
 
   const profileSchema = yup.object({
@@ -125,29 +173,25 @@ const AccountsLogic = (props) => {
             school: '',
             username: '',
             email: '',
-            password: 'fgrewghfr',
+            password: '123456',
             phone: '',
             insta: '',
             snap: '',
           },
     validationSchema: fieldsSchema,
-    onSubmit: (values) => {
-      saveNewValues(values);
-    },
+    onSubmit: pageStatus === 'password' ? saveNewPassword : saveNewValues,
   });
 
-  const generalPageData = {
-    avatar: '⚙️',
-    title: 'Modifier profile',
+  const pagesData = {
+    general: {
+      avatar: '⚙️',
+      title: 'Modifier profile',
+    },
+    password: {
+      avatar: '🔑',
+      title: 'Nouveau mot de passe',
+    },
   };
-
-  const passwordPageData = {
-    avatar: '🔑',
-    title: 'Nouveau mot de passe',
-  };
-
-  const pageData =
-    pageStatus === 'password' ? passwordPageData : generalPageData;
 
   const disconnectUser = () => {
     localStorage.removeItem('accessToken');
@@ -158,6 +202,12 @@ const AccountsLogic = (props) => {
     formik.setFieldValue('password', '');
     history.push('/accounts/edit/password');
     setPageStatus('password');
+  };
+
+  const goToGeneralSettings = () => {
+    formik.setFieldValue('password', '123456');
+    history.push('/accounts/edit');
+    setPageStatus('general');
   };
 
   useEffect(() => {
@@ -177,8 +227,12 @@ const AccountsLogic = (props) => {
         setPageLoaded(true);
       })
       .catch((err) => {
-        localStorage.removeItem('accessToken');
-        history.push('/auth/login');
+        if (err.response && err.response.status === 403) {
+          localStorage.removeItem('accessToken');
+          history.push('/auth/login');
+        } else {
+          console.log(err);
+        }
       });
   }, [API_ORIGIN, history, formik]);
 
@@ -186,11 +240,14 @@ const AccountsLogic = (props) => {
     fieldsSchema,
     fieldsProps,
     formik,
-    pageData,
+    pagesData,
     pageLoaded,
     pageStatus,
     disconnectUser,
     goToChangePassword,
+    goToGeneralSettings,
+    setChangeSuccess,
+    changeSuccess,
   };
 };
 

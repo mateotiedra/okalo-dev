@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
-import { Container, IconButton } from '@material-ui/core';
+import { Box, Container, IconButton } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -17,9 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   goBackButton: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    margin: theme.spacing(2),
+    margin: theme.spacing(1),
   },
 }));
 
@@ -30,26 +28,33 @@ export default function MobileContainer(props) {
   const history = useHistory();
 
   const goBack = () => {
-    console.log(props.mustGoBack);
-    if (props.goBackLink) {
+    if (props.goBackFunction) {
+      props.goBackFunction();
+    } else if (props.goBackLink) {
       history.push(props.goBackLink);
       history.go(0);
     } else history.push('/');
   };
 
+  const goBackArrowStyle = {
+    top: props.arrowTopPosition || 0,
+    left: props.arrowLeftPosition || 0,
+  };
+
   return (
     <Container maxWidth='xs'>
-      <div className={classes.root}>
+      <Box className={classes.root}>
         <IconButton
           aria-label='back'
           className={classes.goBackButton}
-          size='large'
+          style={goBackArrowStyle}
+          size='medium'
           onClick={goBack}
         >
           <ArrowBackIcon fontSize='large' />
         </IconButton>
         {props.children}
-      </div>
+      </Box>
     </Container>
   );
 }

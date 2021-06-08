@@ -41,7 +41,7 @@ export default function PasswordField(props) {
       required={props.required}
       size={props.size}
       error={props.error}
-      key={props.key}
+      key={props.keyName}
     >
       <InputLabel htmlFor={'outlined-adornment' + props.name}>
         {props.label}

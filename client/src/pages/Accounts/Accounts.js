@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React, { useEffect } from 'react';
+import React from 'react';
 //import { useHistory } from 'react-router';
 //import Axios from 'axios';
 
@@ -7,11 +7,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Box,
   Button,
+  Collapse,
   Divider,
   Grid,
   Link,
   Typography,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 
 import AccountsLogic from './AccountsLogic';
 
@@ -54,16 +56,20 @@ function Accounts(props) {
     fieldsSchema,
     fieldsProps,
     formik,
-    pageData,
+    pagesData,
     pageLoaded,
     disconnectUser,
     goToChangePassword,
+    goToGeneralSettings,
+    setChangeSuccess,
+    changeSuccess,
   } = AccountsLogic(props);
 
   if (!pageLoaded) {
     return <></>;
   }
 
+  const pageData = pagesData[pageStatus];
   const schoolSection = (
     <Box className={classes.sectionContainer}>
       <Typography component='h6' className={classes.sectionTitle}>
@@ -105,6 +111,12 @@ function Accounts(props) {
     </Link>
   );
 
+  const successAlert = (
+    <Collapse in={changeSuccess}>
+      <Alert>Success!</Alert>
+    </Collapse>
+  );
+
   const contactSection = (
     <Box className={classes.sectionContainer}>
       <Typography component='h6' className={classes.sectionTitle}>
@@ -118,24 +130,32 @@ function Accounts(props) {
     </Box>
   );
 
+  const saveButton = (
+    <Button
+      type='submit'
+      fullWidth
+      variant='contained'
+      color='primary'
+      className={classes.submitChange}
+      onBlur={() => {
+        setChangeSuccess(false);
+      }}
+    >
+      Enregistrer
+    </Button>
+  );
+
   if (pageStatus === 'password') {
     return (
-      <AlertPage {...pageData} goBackLink='/accounts/edit'>
+      <AlertPage {...pageData} goBackFunc={goToGeneralSettings}>
         <FieldsGroup
           fieldsSchema={fieldsSchema}
           fieldsProps={fieldsProps}
           formik={formik}
           className={classes.form}
         >
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submitChange}
-          >
-            Enregistrer
-          </Button>
+          {successAlert}
+          {saveButton}
         </FieldsGroup>
       </AlertPage>
     );
@@ -169,19 +189,17 @@ function Accounts(props) {
         fieldsVariant='standard'
         className={classes.form}
       >
-        <Button
-          type='submit'
-          fullWidth
-          variant='contained'
-          color='primary'
-          className={classes.submit}
-        >
-          Enregistrer
-        </Button>
+        {successAlert}
+        {saveButton}
       </FieldsGroup>
       <Grid container>
         <Grid item xs>
-          <Link variant='body2' onClick={disconnectUser}>
+          <Link
+            variant='body2'
+            type='button'
+            component={'button'}
+            onClick={disconnectUser}
+          >
             Se déconnecter
           </Link>
         </Grid>

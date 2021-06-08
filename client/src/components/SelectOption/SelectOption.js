@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
-import { FormControl, InputLabel, Select } from '@material-ui/core';
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Select,
+} from '@material-ui/core';
 
 export default function PasswordField(props) {
   useEffect(() => {});
@@ -16,7 +21,8 @@ export default function PasswordField(props) {
       margin={props.margin}
       backgroundColor='transparent'
       size={props.size}
-      key={props.key}
+      key={props.keyName}
+      error={props.error}
     >
       <InputLabel htmlFor='outlined-age-native-simple'>
         {props.label}
@@ -34,6 +40,7 @@ export default function PasswordField(props) {
         <option aria-label='None' value='' />
         {props.children}
       </Select>
+      <FormHelperText>{props.helperText}</FormHelperText>
     </FormControl>
   );
 }
