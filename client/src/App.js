@@ -14,6 +14,7 @@ import Help from './pages/Help/Help';
 import Contact from './pages/Contact/Contact';
 import Sell from './pages/Sell/Sell';
 import Faq from './pages/Faq/Faq';
+import NotFoundError from './pages/errors/NotFoundError';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path='/contact' exact component={Contact} />
             <Route path='/sell' exact component={Sell} />
             <Route path='/faq' exact component={Faq} />
+            <Route component={NotFoundError} />
           </Switch>
         </ErrorHandler>
       </Router>

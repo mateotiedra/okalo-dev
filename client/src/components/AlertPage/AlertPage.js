@@ -50,6 +50,8 @@ export default function AlertPage(props) {
       })
     : undefined;
 
+  console.log(props.body.split('<br />'));
+
   return (
     <Box className={classes.root}>
       <Box className={`${classes.backgroundIconTop} ${classes.backgroundIcon}`}>
@@ -71,9 +73,14 @@ export default function AlertPage(props) {
             {props.title}
           </Typography>
         )}
-        {props.body && (
-          <Typography className={classes.body}>{props.body}</Typography>
-        )}
+        {props.body &&
+          props.body.split('<br />').map((text, index) => {
+            return (
+              <Typography key={index} className={classes.body}>
+                {text}
+              </Typography>
+            );
+          })}
         {props.children}
         {props.ctaButton && (
           <Button
