@@ -72,11 +72,11 @@ export default function FieldsGroup(props) {
       {props.fieldsSchema._nodes
         .map((fieldRef, index) => {
           return (
-            <>
+            <React.Fragment key={fieldRef + '-' + index}>
               {displayPreviousComponents(fieldRef)}
               {displayField(fieldRef, index)}
               {displayNextComponents(fieldRef)}
-            </>
+            </React.Fragment>
           );
         })
         .reverse()}

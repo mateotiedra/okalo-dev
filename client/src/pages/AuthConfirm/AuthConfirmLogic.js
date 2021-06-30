@@ -1,17 +1,27 @@
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import {
+  BiUpsideDown,
+  BiTrophy,
+  BiAt,
+  BiHourglass,
+  BiMailSend,
+} from 'react-icons/bi';
 
 import AppConfig from '../../config/AppConfig';
+import AxiosHelper from '../../helpers/AxiosHelper';
 
-import Axios from 'axios';
 import FormHelper from '../../helpers/FormHelper';
 
-const AuthConfirmLogic = (props) => {
+const AuthConfirmLogic = ({ history, location, match }) => {
   const { API_ORIGIN } = AppConfig();
-  const history = props.history;
-  const { email } = (props.location && props.location.state) || {};
+  const { setInterceptors } = AxiosHelper(axios, history);
+
+  const { email } = (location && location.state) || {};
   const [destinationEmail, setDestinationEmail] = useState(email);
 
-  const confirmationCode = props.match.params.confirmationCode;
+  const hasFetchedData = useRef(false);
+  const confirmationCode = match.params.confirmationCode;
   const [pageStatus, setPageStatus] = useState(
     `${
       !confirmationCode || confirmationCode === 'pending'
@@ -42,9 +52,10 @@ const AuthConfirmLogic = (props) => {
 
   const sendEmail = () => {
     if (isEmail(emailField.value)) {
-      Axios.post(API_ORIGIN + '/api/auth/resendconfirmationlink', {
-        email: emailField.value,
-      })
+      axios
+        .post(API_ORIGIN + '/api/auth/resendconfirmationlink', {
+          email: emailField.value,
+        })
         .then((res) => {
           setDestinationEmail(res.data.destinationEmail);
           setPageStatus('pending');
@@ -74,7 +85,7 @@ const AuthConfirmLogic = (props) => {
 
   const pagesData = {
     pending: {
-      avatar: '📫',
+      icon: <BiMailSend />,
       title: 'Check ta boite mail',
       body: `Nous avons envoyé un email de confirmation${
         destinationEmail
@@ -88,7 +99,7 @@ const AuthConfirmLogic = (props) => {
       },
     },
     expired: {
-      avatar: '⌛',
+      icon: <BiHourglass />,
       title: 'Lien expiré',
       body: 'Le lien que vous avez suivi a expiré.',
       ctaButton: {
@@ -97,7 +108,7 @@ const AuthConfirmLogic = (props) => {
       },
     },
     success: {
-      avatar: '🤸‍♂️',
+      icon: <BiTrophy />,
       title: 'Inscription terminé',
       body: `Tu t'es inscrit avec succès ! Ton compte est maintenant prêt à être utilisé.`,
       ctaButton: {
@@ -109,7 +120,7 @@ const AuthConfirmLogic = (props) => {
       loading: true,
     },
     resending: {
-      avatar: '📧',
+      icon: <BiAt />,
       title: 'Nouveau lien',
       body: "Donnes nous l'adresse email avec laquelle tu t'es inscrit afin de recevoir un nouveau lien de confirmation.",
       emailField: {
@@ -132,7 +143,7 @@ const AuthConfirmLogic = (props) => {
       },
     },
     alreadyActive: {
-      avatar: '🏃',
+      icon: <BiUpsideDown />,
       title: 'Déjà confirmé',
       body: `L'adresse email${
         destinationEmail ? ` : ${destinationEmail}` : ''
@@ -145,8 +156,14 @@ const AuthConfirmLogic = (props) => {
   };
 
   useEffect(() => {
+    if (hasFetchedData.current) return;
+    hasFetchedData.current = true;
+
+    setInterceptors();
+
     const updatePageStatus = () => {
-      Axios.post(API_ORIGIN + '/api/auth/confirm/' + confirmationCode)
+      axios
+        .post(API_ORIGIN + '/api/auth/confirm/' + confirmationCode)
         .then((res) => {
           localStorage.setItem('accessToken', res.data.accessToken);
           setPageStatus('success');
@@ -162,7 +179,7 @@ const AuthConfirmLogic = (props) => {
     };
 
     if (pageStatus === 'sending' && confirmationCode) updatePageStatus();
-  }, [API_ORIGIN, history, pageStatus, confirmationCode]);
+  }, [API_ORIGIN, setInterceptors, pageStatus, confirmationCode]);
 
   const pageData = pagesData[pageStatus];
 

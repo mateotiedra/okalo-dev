@@ -7,16 +7,17 @@ import {
   TextField,
   withWidth,
   Button,
+  Divider,
 } from '@material-ui/core';
 //import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
 
 import TopSectionLogic from './TopSectionLogic';
-//import EmojiWheel from '../../components/Animated/EmojiWheel';
+import BlobScene from '../../components/BlobScene/BlobScene';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: '10vh',
-    height: '90vh',
+    paddingTop: '10vh',
+    height: '100vh',
     width: '100vw',
     display: 'flex',
     flexDirection: 'column',
@@ -29,10 +30,21 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '50vw',
   },
   form: {
-    margin: theme.spacing(6, 2, 0, 2),
+    width: '100%',
   },
-  sellButton: {
-    marginTop: theme.spacing(3),
+  ctaContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: theme.spacing(3),
+    marginTop: theme.spacing(6),
+  },
+  testBox: {
+    backgroundColor: 'coral',
+    width: '100px',
+    height: '100px',
+    margin: 0,
   },
   emojiWheel: {
     width: 540,
@@ -46,7 +58,7 @@ function TopSection(props) {
   const { typoVariant } = TopSectionLogic(props);
 
   return (
-    <Box className={classes.root}>
+    <BlobScene>
       {/*<EmojiWheel
           list={['📕','🖋️','🎒','🖊','📙','🖍️','➕','✏️','📗','💯','📔','🎓','📘','🖌️','📖','✨','📃','📂',
           ]}
@@ -55,38 +67,40 @@ function TopSection(props) {
           className={classes.emojiWheel}
           emojisSize={emojisSize}
         />*/}
-      <Typography
-        variant={typoVariant}
-        component={'h1'}
-        align='center'
-        className={classes.topline}
-      >
-        La plateforme pour trouver tes livres pas chers.
-      </Typography>
-      <Container maxWidth='sm' justifyContent='center'>
-        <form noValidate className={classes.form}>
-          <TextField
-            variant='outlined'
-            margin='none'
-            fullWidth
-            id='research'
-            label='Titre ou auteur du livre'
-            name='search'
-            type='search'
-          />
-        </form>
-      </Container>
 
-      <Button
-        variant='contained'
-        color='primary'
-        size='large'
-        href='/sell'
-        className={classes.sellButton}
-      >
-        Mettre un livre en vente
-      </Button>
-    </Box>
+      <Container maxWidth='sm' className={classes.root}>
+        <Typography
+          variant={typoVariant}
+          component={'h1'}
+          align='center'
+          className={classes.topline}
+        >
+          La plateforme pour trouver tes livres pas chers.
+        </Typography>
+        <Box
+          className={classes.ctaContainer}
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+        >
+          <form noValidate className={classes.form}>
+            <TextField
+              variant='outlined'
+              margin='none'
+              fullWidth
+              id='research'
+              label='Chercher un livre (titre ou auteur)'
+              name='search'
+              type='search'
+            />
+          </form>
+          <Divider variant='middle' width='25%' />
+          <Button variant='contained' color='primary' size='large' href='/sell'>
+            Mettre un livre en vente
+          </Button>
+        </Box>
+      </Container>
+    </BlobScene>
   );
 }
 

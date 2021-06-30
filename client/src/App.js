@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { CssBaseline } from '@material-ui/core';
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
 
 import Home from './pages/Home/Home';
 import Auth from './pages/Auth/Auth';
@@ -19,27 +20,33 @@ function App() {
     <>
       <CssBaseline />
       <Router>
-        <Switch>
-          <Route path='/' exact component={Home} />
-          <Route path='/auth/:option' exact component={Auth} />
-          <Route
-            path='/auth/confirm/:confirmationCode'
-            exact
-            component={AuthConfirm}
-          />
-          <Route
-            path='/auth/resetpassword/:confirmationCode'
-            exact
-            component={ResetPassword}
-          />
-          <Route path='/users/:username' exact component={Profile} />
-          <Route path='/accounts/edit' exact component={Accounts} />
-          <Route path='/accounts/edit/:what' exact component={Accounts} />
-          <Route path='/help' exact component={Help} />
-          <Route path='/contact' exact component={Contact} />
-          <Route path='/sell' exact component={Sell} />
-          <Route path='/faq' exact component={Faq} />
-        </Switch>
+        <ErrorHandler>
+          <Switch>
+            <Route path='/' exact component={Home} />
+
+            <Route path='/auth/:option' exact component={Auth} />
+            <Route
+              path='/auth/confirm/:confirmationCode'
+              exact
+              component={AuthConfirm}
+            />
+            <Route
+              path='/auth/resetpassword/:confirmationCode'
+              exact
+              component={ResetPassword}
+            />
+
+            <Route path='/users/:username' exact component={Profile} />
+
+            <Route path='/accounts/edit' exact component={Accounts} />
+            <Route path='/accounts/edit/:what' exact component={Accounts} />
+
+            <Route path='/help' exact component={Help} />
+            <Route path='/contact' exact component={Contact} />
+            <Route path='/sell' exact component={Sell} />
+            <Route path='/faq' exact component={Faq} />
+          </Switch>
+        </ErrorHandler>
       </Router>
     </>
   );

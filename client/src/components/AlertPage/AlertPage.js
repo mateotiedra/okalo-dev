@@ -1,15 +1,15 @@
-import { Box, Button, Typography } from '@material-ui/core';
+import React from 'react';
+import { Box, Button, Typography, useTheme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
-import EmojiIcon from '../EmojiIcon/EmojiIcon';
 
 const useStyles = makeStyles((theme) => ({
-  avatar: {
-    marginBottom: theme.spacing(4),
-  },
-  avatarSmallerSpace: {
-    marginBottom: theme.spacing(1),
+  root: {
+    width: '100vw',
+    height: '100vh',
+    overflow: 'hidden',
+    position: 'relative',
   },
   title: {
     marginBottom: theme.spacing(3),
@@ -22,47 +22,69 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2, 0),
   },
+  backgroundIcon: {
+    position: 'absolute',
+    transform: 'translateX(-50%) translateY(-50%)',
+    overflow: 'hidden',
+    zIndex: -5,
+    opacity: 0.1,
+  },
+  backgroundIconTop: {
+    top: '20%',
+    left: '90%',
+  },
+  backgroundIconBottom: {
+    top: '80%',
+    left: '10%',
+  },
 }));
 
 export default function AlertPage(props) {
   const classes = useStyles();
+  const theme = useTheme();
 
-  const avatarSize = props.avatarSize || (props.longAlert ? 37 : 100);
+  const backgroundIcon = props.icon
+    ? React.cloneElement(props.icon, {
+        size: 300,
+        color: theme.palette.secondary.main,
+      })
+    : undefined;
 
   return (
-    <MobileContainer
-      maxWidth='xs'
-      goBackLink={props.goBackLink}
-      goBackFunc={props.goBackFunc}
-    >
-      {props.avatar && (
-        <Box
-          className={
-            props.longAlert ? classes.avatarSmallerSpace : classes.avatar
-          }
-        >
-          <EmojiIcon icon={props.avatar} size={avatarSize} />
-        </Box>
-      )}
-      {props.title && (
-        <Typography component='h1' variant='h4' className={classes.title}>
-          {props.title}
-        </Typography>
-      )}
-      {props.body && (
-        <Typography component='body' className={classes.body}>
-          {props.body}
-        </Typography>
-      )}
-      {props.children}
-      {props.ctaButton && (
-        <Button
-          variant='contained'
-          color='primary'
-          className={classes.submit}
-          {...props.ctaButton}
-        />
-      )}
-    </MobileContainer>
+    <Box className={classes.root}>
+      <Box className={`${classes.backgroundIconTop} ${classes.backgroundIcon}`}>
+        {backgroundIcon}
+      </Box>
+      <Box
+        className={`${classes.backgroundIconBottom} ${classes.backgroundIcon}`}
+      >
+        {backgroundIcon}
+      </Box>
+      <MobileContainer
+        maxWidth='xs'
+        goBackLink={props.goBackLink}
+        goBackFunction={props.goBackFunction}
+        noNavBar
+      >
+        {props.title && (
+          <Typography component='h1' variant='h4' className={classes.title}>
+            {props.title}
+          </Typography>
+        )}
+        {props.body && (
+          <Typography className={classes.body}>{props.body}</Typography>
+        )}
+        {props.children}
+        {props.ctaButton && (
+          <Button
+            variant='contained'
+            color='primary'
+            fullWidth
+            className={classes.submit}
+            {...props.ctaButton}
+          />
+        )}
+      </MobileContainer>
+    </Box>
   );
 }

@@ -2,23 +2,26 @@ import { createMuiTheme } from '@material-ui/core/styles';
 export const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#247ba0',
+      main: '#0496FF',
     },
     secondary: {
-      main: '#f25f5c',
+      main: '#0D3B66',
     },
     background: {
-      //default: '#fff',
+      default: '#fff',
+    },
+    error: {
+      main: '#FB3640',
+    },
+    success: {
+      main: '#7BC950',
+    },
+    warning: {
+      main: '#FFC600',
     },
   },
   typography: {
-    fontFamily: [
-      'Roboto',
-      'Segoe UI Emoji',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-    ].join(','),
+    fontFamily: ['Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
   },
   shape: {
     borderRadius: 20,

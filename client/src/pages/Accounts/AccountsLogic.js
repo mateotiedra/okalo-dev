@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 
-import Axios from 'axios';
-
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import AppConfig from '../../config/AppConfig';
+import axios from 'axios';
 
-const AccountsLogic = (props) => {
+import AppConfig from '../../config/AppConfig';
+import AxiosHelper from '../../helpers/AxiosHelper';
+
+const AccountsLogic = ({ history, match }) => {
   const { API_ORIGIN } = AppConfig();
-  const history = props.history;
-  const [pageStatus, setPageStatus] = useState(
-    props.match.params.what || 'general'
-  );
+  const { setInterceptors } = AxiosHelper(axios, history);
+
+  const [pageStatus, setPageStatus] = useState('loading');
 
   const hasFetchedData = useRef(false);
-  const [pageLoaded, setPageLoaded] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,21 +29,22 @@ const AccountsLogic = (props) => {
   const [changeSuccess, setChangeSuccess] = useState(false);
 
   const saveNewValues = (values) => {
-    Axios.post(
-      API_ORIGIN + '/api/user/settings',
-      {
-        fullname: values.fullname,
-        insta: values.insta,
-        phone: values.phone,
-        school: values.school,
-        snap: values.snap,
-      },
-      {
-        headers: {
-          'x-access-token': localStorage.getItem('accessToken'),
+    axios
+      .post(
+        API_ORIGIN + '/api/user/settings',
+        {
+          fullname: values.fullname,
+          insta: values.insta,
+          phone: values.phone,
+          school: values.school,
+          snap: values.snap,
         },
-      }
-    )
+        {
+          headers: {
+            'x-access-token': localStorage.getItem('accessToken'),
+          },
+        }
+      )
       .then((res) => {
         setChangeSuccess(true);
       })
@@ -57,17 +57,18 @@ const AccountsLogic = (props) => {
   };
 
   const saveNewPassword = (values) => {
-    Axios.post(
-      API_ORIGIN + '/api/user/settings',
-      {
-        password: values.password,
-      },
-      {
-        headers: {
-          'x-access-token': localStorage.getItem('accessToken'),
+    axios
+      .post(
+        API_ORIGIN + '/api/user/settings',
+        {
+          password: values.password,
         },
-      }
-    )
+        {
+          headers: {
+            'x-access-token': localStorage.getItem('accessToken'),
+          },
+        }
+      )
       .then((res) => {
         setChangeSuccess(true);
       })
@@ -182,17 +183,6 @@ const AccountsLogic = (props) => {
     onSubmit: pageStatus === 'password' ? saveNewPassword : saveNewValues,
   });
 
-  const pagesData = {
-    general: {
-      avatar: '⚙️',
-      title: 'Modifier profile',
-    },
-    password: {
-      avatar: '🔑',
-      title: 'Nouveau mot de passe',
-    },
-  };
-
   const disconnectUser = () => {
     localStorage.removeItem('accessToken');
     history.push('/');
@@ -214,17 +204,20 @@ const AccountsLogic = (props) => {
     if (hasFetchedData.current) return;
     hasFetchedData.current = true;
 
+    setInterceptors();
+
     // Get the user's data
-    Axios.get(API_ORIGIN + '/api/user/u', {
-      headers: {
-        'x-access-token': localStorage.getItem('accessToken'),
-      },
-    })
+    axios
+      .get(API_ORIGIN + '/api/user/u', {
+        headers: {
+          'x-access-token': localStorage.getItem('accessToken'),
+        },
+      })
       .then((res) => {
         for (const fieldName in res.data) {
           formik.setFieldValue(fieldName, res.data[fieldName]);
         }
-        setPageLoaded(true);
+        setPageStatus(match.params.what || 'general');
       })
       .catch((err) => {
         if (err.response && err.response.status === 403) {
@@ -234,14 +227,12 @@ const AccountsLogic = (props) => {
           console.log(err);
         }
       });
-  }, [API_ORIGIN, history, formik]);
+  }, [API_ORIGIN, history, formik, setInterceptors, match]);
 
   return {
     fieldsSchema,
     fieldsProps,
     formik,
-    pagesData,
-    pageLoaded,
     pageStatus,
     disconnectUser,
     goToChangePassword,

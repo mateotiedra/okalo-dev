@@ -17,7 +17,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from 'react-router-dom';
 
 import NavbarLogic from './NabvarLogic';
-import EmojiIcon from '../EmojiIcon/EmojiIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,13 +38,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   title: {
-    color: 'black',
     fontWeight: 'bold',
     [theme.breakpoints.up('sm')]: {},
   },
   list: { width: '75vw' },
   listItem: { padding: theme.spacing(3) },
-  listIcon: { color: 'black' },
 }));
 
 export default function Navbar() {
@@ -58,6 +55,7 @@ export default function Navbar() {
     <SwipeableDrawer
       disableSwipeToOpen
       open={navDrawerOpen}
+      onOpen={openNavDrawer}
       onClose={closeNavDrawer}
     >
       <div
@@ -76,8 +74,8 @@ export default function Navbar() {
                   key={link.title}
                   className={classes.listItem}
                 >
-                  <ListItemIcon className={classes.listIcon}>
-                    <EmojiIcon icon={link.icon} />
+                  <ListItemIcon>
+                    {React.cloneElement(link.icon, { size: 15 })}
                   </ListItemIcon>
                   <ListItemText primary={link.title} />
                 </ListItem>
@@ -92,7 +90,7 @@ export default function Navbar() {
   );
   return (
     <div className={classes.root}>
-      <AppBar position='fixed' color='inherit' elevation={2} vari>
+      <AppBar position='fixed' color='inherit' elevation={2}>
         <Toolbar className={classes.navContainer}>
           <IconButton
             edge='start'
@@ -107,6 +105,7 @@ export default function Navbar() {
             variant='h5'
             className={classes.title}
             component={Link}
+            color='inherit'
             to={'/'}
           >
             okalo

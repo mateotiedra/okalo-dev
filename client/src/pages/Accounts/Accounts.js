@@ -1,7 +1,6 @@
 // eslint-disable-next-line
 import React from 'react';
-//import { useHistory } from 'react-router';
-//import Axios from 'axios';
+import { BiCog, BiKey } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -19,8 +18,8 @@ import AccountsLogic from './AccountsLogic';
 
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
-import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
-import AlertPage from '../../components/AlertPage/AlertPage';
+import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import FormHeader from '../../components/pageParts/FormHeader/BlobAvatar/FormHeader';
 
 const useStyles = makeStyles((theme) => ({
   sectionContainer: {
@@ -56,8 +55,6 @@ function Accounts(props) {
     fieldsSchema,
     fieldsProps,
     formik,
-    pagesData,
-    pageLoaded,
     disconnectUser,
     goToChangePassword,
     goToGeneralSettings,
@@ -65,11 +62,6 @@ function Accounts(props) {
     changeSuccess,
   } = AccountsLogic(props);
 
-  if (!pageLoaded) {
-    return <></>;
-  }
-
-  const pageData = pagesData[pageStatus];
   const schoolSection = (
     <Box className={classes.sectionContainer}>
       <Typography component='h6' className={classes.sectionTitle}>
@@ -113,7 +105,7 @@ function Accounts(props) {
 
   const successAlert = (
     <Collapse in={changeSuccess}>
-      <Alert>Success!</Alert>
+      <Alert>Changements sauvegardés !</Alert>
     </Collapse>
   );
 
@@ -144,10 +136,11 @@ function Accounts(props) {
       Enregistrer
     </Button>
   );
-
-  if (pageStatus === 'password') {
+  if (pageStatus === 'loading') return <LoadingPage />;
+  else if (pageStatus === 'password') {
     return (
-      <AlertPage {...pageData} goBackFunc={goToGeneralSettings}>
+      <MobileContainer goBackFunction={goToGeneralSettings}>
+        <FormHeader icon={<BiKey />} title='Nouveau mot de passe' />
         <FieldsGroup
           fieldsSchema={fieldsSchema}
           fieldsProps={fieldsProps}
@@ -157,18 +150,13 @@ function Accounts(props) {
           {successAlert}
           {saveButton}
         </FieldsGroup>
-      </AlertPage>
+      </MobileContainer>
     );
   }
 
   return (
     <MobileContainer>
-      <Box className={classes.avatar}>
-        <EmojiIcon icon={pageData.avatar} size={37} />
-      </Box>
-      <Typography component='h1' variant='h5'>
-        {pageData.title}
-      </Typography>
+      <FormHeader icon={<BiCog />} title='Modifier profile' />
       <FieldsGroup
         fieldsSchema={fieldsSchema}
         fieldsProps={{

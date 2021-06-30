@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define('bid', {
+  const Bid = sequelize.define('bid', {
     title: {
       type: Sequelize.STRING,
     },
@@ -20,5 +20,13 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return User;
+  Bid.associate = (models) => {
+    Bid.belongsTo(models.user, {
+      foreignKey: {
+        allowNull: false,
+      },
+    });
+  };
+
+  return Bid;
 };

@@ -1,17 +1,21 @@
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
 import AppConfig from '../../config/AppConfig';
+import AxiosHelper from '../../helpers/AxiosHelper';
 
-import Axios from 'axios';
 import FormHelper from '../../helpers/FormHelper';
 
-const ResetPasswordLogic = (props) => {
+import { BiSend, BiHourglass, BiEnvelope } from 'react-icons/bi';
+
+const ResetPasswordLogic = ({ history, location, match }) => {
   const { API_ORIGIN } = AppConfig();
-  const history = props.history;
-  const { email } = (props.location && props.location.state) || {};
+  const { setInterceptors } = AxiosHelper(axios, history);
+
+  const { email } = (location && location.state) || {};
   const [destinationEmail, setDestinationEmail] = useState(email);
 
-  const confirmationCode = props.match.params.confirmationCode;
+  const confirmationCode = match.params.confirmationCode;
   const [pageStatus, setPageStatus] = useState(
     `${
       !confirmationCode || confirmationCode === 'sending'
@@ -20,7 +24,6 @@ const ResetPasswordLogic = (props) => {
     }`
   );
 
-  console.log(pageStatus);
   const hasFetchedData = useRef(false);
   const [pageLoaded, setPageLoaded] = useState(false);
 
@@ -38,9 +41,10 @@ const ResetPasswordLogic = (props) => {
 
   const sendEmail = () => {
     if (isEmail(emailField.value)) {
-      Axios.post(API_ORIGIN + '/api/auth/sendresetpasswordlink', {
-        email: emailField.value,
-      })
+      axios
+        .post(API_ORIGIN + '/api/auth/sendresetpasswordlink', {
+          email: emailField.value,
+        })
         .then((res) => {
           setDestinationEmail(res.data.destinationEmail);
           setPageStatus('pending');
@@ -76,7 +80,7 @@ const ResetPasswordLogic = (props) => {
 
   const pagesData = {
     pending: {
-      avatar: '📫',
+      icon: <BiSend />,
       title: 'Email de réinitialisation du mot de passe envoyé !',
       body: `Tu vas recevoir un mail pour réinitialiser ton mot de passe${
         destinationEmail
@@ -90,7 +94,7 @@ const ResetPasswordLogic = (props) => {
       },
     },
     expired: {
-      avatar: '⌛',
+      icon: <BiHourglass />,
       title: 'Lien expiré',
       body: 'Le lien que vous avez suivi a expiré. Si tu as toujours besoin de réinitialiser ton mot de passe, demandes à en recevoir un nouveau',
       ctaButton: {
@@ -102,9 +106,9 @@ const ResetPasswordLogic = (props) => {
       loading: true,
     },
     sendingEmail: {
-      avatar: '📧',
+      icon: <BiEnvelope />,
       title: 'Réinitialiser ton mot de passe',
-      body: "Entres l'adresse email qui est associé à ton compte.",
+      body: "Entres l'adresse email qui est associé à ton compte afin de pouvoir réinitialiser ton mot de passe.",
       emailField: {
         name: 'email',
         id: 'email',
@@ -130,15 +134,17 @@ const ResetPasswordLogic = (props) => {
     if (hasFetchedData.current) return;
     hasFetchedData.current = true;
 
+    setInterceptors();
+
     const updatePageStatus = () => {
-      Axios.post(API_ORIGIN + '/api/auth/resetpassword/' + confirmationCode)
+      axios
+        .post(API_ORIGIN + '/api/auth/resetpassword/' + confirmationCode)
         .then((res) => {
           localStorage.setItem('accessToken', res.data.accessToken);
           history.push('/accounts/edit/password');
           setPageLoaded(true);
         })
         .catch((err) => {
-          console.log(err);
           if (err.response && err.response.status === 404) {
             setPageStatus('expired');
             setPageLoaded(true);
@@ -149,7 +155,7 @@ const ResetPasswordLogic = (props) => {
 
     if (pageStatus === 'sending' && confirmationCode) updatePageStatus();
     else setPageLoaded(true);
-  }, [API_ORIGIN, history, pageStatus, confirmationCode]);
+  }, [API_ORIGIN, history, pageStatus, confirmationCode, setInterceptors]);
 
   const pageData = pagesData[pageStatus];
 

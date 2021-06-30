@@ -1,19 +1,14 @@
-// eslint-disable-next-line
-//import { useHistory } from 'react-router';
-//import Axios from 'axios';
+import { BiUser, BiLogIn } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Link, Grid, Box, Typography } from '@material-ui/core';
-import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
+import { Button, Link, Grid, Box } from '@material-ui/core';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
 
 import AuthLogic from './AuthLogic';
+import FormHeader from '../../components/pageParts/FormHeader/BlobAvatar/FormHeader';
 
 const useStyles = makeStyles((theme) => ({
-  avatar: {
-    margin: theme.spacing(1),
-  },
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
@@ -37,12 +32,10 @@ function Auth(props) {
 
   return (
     <MobileContainer>
-      <Box className={classes.avatar}>
-        <EmojiIcon icon={displaySignIn ? '👤' : '👥'} size={37} />
-      </Box>
-      <Typography component='h1' variant='h5'>
-        {displaySignIn ? 'Connexion' : 'Inscription'}
-      </Typography>
+      <FormHeader
+        icon={displaySignIn ? <BiLogIn /> : <BiUser />}
+        title={displaySignIn ? 'Connexion' : 'Inscription'}
+      />
       <Box noValidate className={classes.form}>
         <FieldsGroup
           fieldsSchema={fieldsSchema}

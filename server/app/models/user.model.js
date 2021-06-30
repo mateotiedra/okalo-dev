@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define('users', {
+  const attributes = {
     username: {
       type: Sequelize.STRING,
     },
@@ -31,7 +31,17 @@ module.exports = (sequelize, Sequelize) => {
     confirmationCode: {
       type: Sequelize.STRING,
     },
-  });
+  };
+
+  const options = {};
+
+  const User = sequelize.define('user', attributes, options);
+
+  User.associate = (models) => {
+    User.hasMany(models.bid, {
+      onDelete: 'cascade',
+    });
+  };
 
   return User;
 };

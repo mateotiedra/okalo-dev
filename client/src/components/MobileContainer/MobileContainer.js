@@ -12,8 +12,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    [theme.breakpoints.down('sm')]: { padding: theme.spacing(7, 2, 2, 2) },
-    padding: theme.spacing(5, 0, 2, 0),
+    [theme.breakpoints.down('sm')]: { padding: theme.spacing(2, 1, 2, 1) },
+    padding: theme.spacing(2, 0, 2, 0),
+  },
+  navBarPadding: {
+    [theme.breakpoints.down('sm')]: { paddingTop: theme.spacing(7) },
+    paddingTop: theme.spacing(5),
   },
   goBackButton: {
     position: 'absolute',
@@ -41,9 +45,15 @@ export default function MobileContainer(props) {
     left: props.arrowLeftPosition || 0,
   };
 
+  console.log(props.noNavBar);
+
   return (
-    <Container maxWidth='xs'>
-      <Box className={classes.root}>
+    <Container maxWidth={props.maxWidth || 'xs'}>
+      <Box
+        className={`${classes.root} ${
+          props.noNavBar ? '' : classes.navBarPadding
+        }`}
+      >
         <IconButton
           aria-label='back'
           className={classes.goBackButton}

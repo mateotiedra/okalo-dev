@@ -1,26 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import axios from 'axios';
 
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Axios from 'axios';
 
-const AuthLogic = (props) => {
+import AppConfig from '../../config/AppConfig';
+import AxiosHelper from '../../helpers/AxiosHelper';
+
+const AuthLogic = ({ history, match }) => {
+  const { API_ORIGIN } = AppConfig();
+  const { setInterceptors, errorCodeEquals } = AxiosHelper(axios, history);
+
+  const hasFetchedData = useRef(false);
+
+  useEffect(() => {
+    if (hasFetchedData.current) return;
+    hasFetchedData.current = true;
+    setInterceptors();
+  }, [setInterceptors]);
+
   // Frontend
   const theme = useTheme();
 
-  const history = props.history;
-
-  const [displaySignIn, setDisplaySignIn] = useState(
-    props.match.params.option === 'login'
-  );
+  const displaySignIn = match.params.option === 'login';
 
   const switchSignIn = () => {
     history.push(`/auth/${displaySignIn ? 'signup' : 'login'}`);
-    //setErrors(defaultErrors);
-    setDisplaySignIn(!displaySignIn);
+    window.location.reload();
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -37,18 +46,19 @@ const AuthLogic = (props) => {
 
   // Connection to the api
   const signup = (values) => {
-    Axios.post('http://localhost:8080/api/auth/signup', {
-      email: values.email,
-      username: values.username,
-      school: values.school,
-      password: values.password,
-    })
+    axios
+      .post(API_ORIGIN + '/api/auth/signup', {
+        email: values.email,
+        username: values.username,
+        school: values.school,
+        password: values.password,
+      })
       .then((res) => {
         values.emailOrUsername = values.email;
         signin(values);
       })
       .catch((err) => {
-        if (err.response && err.response.status === 400) {
+        if (errorCodeEquals(err, 400)) {
           if (!err.response.data.message) return;
 
           if (err.response.data.message.includes('Username')) {
@@ -76,16 +86,17 @@ const AuthLogic = (props) => {
       emailOrUsername = values.username;
     }
 
-    Axios.post('http://localhost:8080/api/auth/signin', {
-      emailOrUsername: emailOrUsername,
-      password: values.password,
-    })
+    axios
+      .post(API_ORIGIN + '/api/auth/signin', {
+        emailOrUsername: emailOrUsername,
+        password: values.password,
+      })
       .then((response) => {
         localStorage.setItem('accessToken', response.data.accessToken);
         history.push('/');
       })
       .catch((err) => {
-        if (err.response.status === 404) {
+        if (errorCodeEquals(err, 404)) {
           formik.setFieldError(
             'emailOrUsername',
             `${
@@ -95,12 +106,12 @@ const AuthLogic = (props) => {
             } n'appartient à aucun compte`
           );
         } else if (
-          err.response.status === 401 &&
+          errorCodeEquals(err, 401) &&
           err.response.data.message.includes('Password')
         ) {
           formik.setFieldError('password', 'Mot de passe incorrect');
         } else if (
-          err.response.status === 401 &&
+          errorCodeEquals(err, 401) &&
           err.response.data.message.includes('Email')
         ) {
           history.push({
@@ -146,10 +157,7 @@ const AuthLogic = (props) => {
   const signinSchema = yup.object({
     emailOrUsername: yup
       .string()
-      .matches(
-        /^[a-zA-Z0-9_.-@]*$/,
-        "Adresse email ou nom d'utilisateur invalide"
-      )
+      .matches(/^[a-zA-Z0-9_.-@]*$/, "Email ou nom d'utilisateur invalide")
       .required(
         "N'oublies pas de donner ton nom d'utilisateur ou ton adresse email"
       ),
@@ -185,7 +193,7 @@ const AuthLogic = (props) => {
       label: "Nom d'utilisateur",
     },
     emailOrUsername: {
-      label: "Adresse email ou nom d'utilisateur",
+      label: "Email ou nom d'utilisateur",
       autoComplete: 'email',
       autoFocus: !onMobile,
     },

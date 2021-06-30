@@ -1,14 +1,18 @@
 import React from 'react';
 //import { Link } from 'react-router-dom';
-import { Button, Box, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { BiRocket } from 'react-icons/bi';
 
 import Navbar from '../../components/Navbar/Navbar';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
-import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
+import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import AlertPage from '../../components/AlertPage/AlertPage';
+import { BiBook } from 'react-icons/bi';
 
 import SellLogic from './SellLogic';
+import BlobAvatar from '../../components/BlobAvatar/BlobAvatar';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -25,16 +29,36 @@ const useStyles = makeStyles((theme) => ({
 
 function Sell(props) {
   const classes = useStyles();
-  const { pageData, fieldsSchema, fieldsProps, formik, stepBack } =
-    SellLogic(props);
+  const {
+    pageStatus,
+    pageData,
+    fieldsSchema,
+    fieldsProps,
+    formik,
+    stepBack,
+    goBackToHome,
+  } = SellLogic(props);
 
+  if (pageStatus === 'loading') return <LoadingPage />;
+  else if (pageStatus === 'success')
+    return (
+      <AlertPage
+        icon={<BiRocket />}
+        title={'Annonce publié !'}
+        body={`Ton annonce a été publié avec succès ! Tu seras informé dès que quelqu'un sera interressé par ton offre.`}
+        ctaButton={{
+          children: 'Super',
+          onClick: goBackToHome,
+        }}
+      />
+    );
   return (
     <>
       <Navbar />
       <MobileContainer arrowTopPosition={'64px'} goBackFunction={stepBack}>
-        <Box className={classes.avatar}>
-          <EmojiIcon icon={pageData.avatar} size={37} />
-        </Box>
+        <BlobAvatar className={classes.avatar}>
+          <BiBook size={45} color='white' />
+        </BlobAvatar>
         <Typography component='h1' variant='h5'>
           {pageData.title}
         </Typography>

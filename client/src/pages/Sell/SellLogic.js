@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 
-//import Axios from 'axios';
-
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-//import AppConfig from '../../config/AppConfig';
+import axios from 'axios';
 
-const SellLogic = (props) => {
-  //const { API_ORIGIN } = AppConfig();
-  const history = props.history;
+import AppConfig from '../../config/AppConfig';
+import AxiosHelper from '../../helpers/AxiosHelper';
+
+const SellLogic = ({ history }) => {
+  const { API_ORIGIN } = AppConfig();
+  const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
+
   const hasFetchedData = useRef(false);
+  const [pageStatus, setPageStatus] = useState('loading');
   const newBidData = useRef({
     title: '',
     author: '',
@@ -19,11 +22,51 @@ const SellLogic = (props) => {
     annotation: '',
     price: '',
   });
-  const saveNewBidData = (values) => {
+
+  const goBackToHome = () => {
+    history.push('/');
+  };
+
+  const saveNewBidData = (values, sendData = false) => {
     newBidData.current = {
       ...newBidData.current,
       ...values,
     };
+
+    if (sendData) {
+      sendBidData(newBidData.current);
+    }
+  };
+
+  const sendBidData = (values) => {
+    axios
+      .post(
+        API_ORIGIN + '/api/bid/new',
+        {
+          title: values.title,
+          author: values.author,
+          edition: values.edition,
+          condition: values.condition,
+          annotation: values.annotation,
+          price: values.price,
+        },
+        {
+          headers: {
+            'x-access-token': localStorage.getItem('accessToken'),
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        setPageStatus('success');
+      })
+      .catch((err) => {
+        if (getStatusCode(err) === 401) {
+          history.push('/auth/login');
+        } else {
+          console.log(err);
+        }
+      });
   };
 
   const [procedureStep, setProcedureStep] = useState(0);
@@ -56,7 +99,7 @@ const SellLogic = (props) => {
       price: yup
         .number('')
         .typeError(
-          'Prix incorrect (en cas de centimes remplacer "," par un ".")'
+          'Prix incorrect (il n\'est pas nécessaire d\'indiquer la devise et en cas de centimes remplacer "," par un ".")'
         )
         .min(0, 'Le prix ne peut pas être négatif')
         .required("N'oublies pas de choisir un prix de vente pour ton livre"),
@@ -106,8 +149,8 @@ const SellLogic = (props) => {
       },
       validationSchema: fieldsSchema,
       onSubmit: (values) => {
-        saveNewBidData(values);
-        console.log(newBidData.current);
+        setPageStatus('loading');
+        saveNewBidData(values, true);
       },
     }),
   ][procedureStep];
@@ -128,12 +171,31 @@ const SellLogic = (props) => {
     if (hasFetchedData.current) return;
     hasFetchedData.current = true;
 
-    if (!localStorage.getItem('accessToken')) {
-      history.push('/auth/login');
-    }
-  });
+    setInterceptors();
 
-  return { pageData, fieldsSchema, fieldsProps, formik, stepBack };
+    axios
+      .get(API_ORIGIN + '/api/user/u', {
+        headers: {
+          'x-access-token': localStorage.getItem('accessToken'),
+        },
+      })
+      .then(() => {
+        setPageStatus('form');
+      })
+      .catch((err) => {
+        history.push('/auth/login');
+      });
+  }, [API_ORIGIN, history, setInterceptors, getStatusCode]);
+
+  return {
+    pageStatus,
+    pageData,
+    fieldsSchema,
+    fieldsProps,
+    formik,
+    stepBack,
+    goBackToHome,
+  };
 };
 
 export default SellLogic;

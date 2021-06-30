@@ -7,8 +7,7 @@ import {
   FormHelperText,
   OutlinedInput,
 } from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { BiShow, BiHide } from 'react-icons/bi';
 
 export default function PasswordField(props) {
   const inputProps = {
@@ -26,7 +25,7 @@ export default function PasswordField(props) {
             onMouseDown={props.handleMouseDownPassword}
             edge='end'
           >
-            {props.showPassword ? <Visibility /> : <VisibilityOff />}
+            {props.showPassword ? <BiShow /> : <BiHide />}
           </IconButton>
         )}
       </InputAdornment>
