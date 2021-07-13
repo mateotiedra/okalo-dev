@@ -45,11 +45,13 @@ const useStyles = makeStyles((theme) => ({
   listItem: { padding: theme.spacing(3) },
 }));
 
-export default function Navbar() {
+export default function Navbar({ title, persoNavLinksObj }) {
   const classes = useStyles();
 
-  const { navDrawerOpen, openNavDrawer, closeNavDrawer, navLinksObj } =
+  const { navDrawerOpen, openNavDrawer, closeNavDrawer, defaultNavLinksObj } =
     NavbarLogic();
+
+  const navLinksObj = persoNavLinksObj || defaultNavLinksObj;
 
   const navDrawer = (
     <SwipeableDrawer
@@ -108,7 +110,7 @@ export default function Navbar() {
             color='inherit'
             to={'/'}
           >
-            okalo
+            {title || 'okalo'}
           </Typography>
           <div className={classes.navLinks}>
             {navLinksObj.map((link) => {

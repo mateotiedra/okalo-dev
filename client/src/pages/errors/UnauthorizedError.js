@@ -1,21 +1,19 @@
 import React from 'react';
 import { BiError } from 'react-icons/bi';
-import { useHistory } from 'react-router-dom';
 
 import AlertPage from '../../components/AlertPage/AlertPage';
 
-function ServerError() {
-  let history = useHistory();
+function ServerError(props) {
   return (
     <AlertPage
       icon={<BiError />}
       color='primary'
-      title='Erreur 404'
-      body="La page auquelle tu essaie d'accéder n'existe pas ou plus. Es-tu sur que l'URL est correct ?"
+      title='Erreur 401'
+      body="Tu n'as pas le droit d'accéder à cette page. Essaies de te connecter si tu ne l'es pas déja"
       ctaButton={{
-        children: "Retourner à l'acceuil",
+        children: 'Se connecter',
         onClick: () => {
-          history.push('/');
+          props.history.push('/auth/login');
         },
       }}
     />

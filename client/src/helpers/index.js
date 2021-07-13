@@ -1,3 +1,18 @@
+const Months = {
+  '01': 'janvier',
+  '02': 'février',
+  '03': 'mars',
+  '04': 'avril',
+  '05': 'mai',
+  '06': 'juin',
+  '07': 'juillet',
+  '08': 'août',
+  '09': 'septembre',
+  10: 'octobre',
+  11: 'novembre',
+  12: 'décembre',
+};
+
 const Helper = (props) => {
   const strMadeOf = (value, specialAllowed) => {
     return value.match('^[a-zA-Z0-9' + specialAllowed + ']*$');
@@ -9,7 +24,27 @@ const Helper = (props) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  return { strMadeOf, randint };
+  const readSince = (date, withDay) => {
+    date = date.split('-');
+    const monthAndYear = Months[date[1]] + ' ' + date[0];
+    const day = 'le ' + parseInt(date[2].substring(0, 2)) + ' ';
+    return `${withDay ? day : ''}${monthAndYear}`;
+  };
+
+  const sentence = (str, lowercase) => {
+    if (lowercase) str = str.toLowerCase();
+    //str[0] = str[0].toUpperCase();
+    return str.trim().replace(/^\w/, (c) => c.toUpperCase());
+  };
+
+  const capitalize = (str, lowercase) => {
+    if (lowercase) str = str.toLowerCase();
+    //str[0] = str[0].toUpperCase();
+    return str.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+    ;
+  };
+
+  return { strMadeOf, randint, readSince, sentence, capitalize };
 };
 
 export default Helper;

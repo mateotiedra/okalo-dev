@@ -21,9 +21,15 @@ export const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: ['Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
+    fontFamily: [
+      'Ubuntu',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
   },
   shape: {
-    borderRadius: 20,
+    borderRadius: 10,
   },
 });

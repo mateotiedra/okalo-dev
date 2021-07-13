@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import './App.css';
 
 import { CssBaseline } from '@material-ui/core';
 import ErrorHandler from './components/ErrorHandler/ErrorHandler';
@@ -15,6 +16,9 @@ import Contact from './pages/Contact/Contact';
 import Sell from './pages/Sell/Sell';
 import Faq from './pages/Faq/Faq';
 import NotFoundError from './pages/errors/NotFoundError';
+import Bid from './pages/Bid/Bid';
+import EditBid from './pages/EditBid/EditBid';
+import AskFromBoard from './pages/AskFromBoard/AskFromBoard';
 
 function App() {
   return (
@@ -41,6 +45,11 @@ function App() {
 
             <Route path='/accounts/edit' exact component={Accounts} />
             <Route path='/accounts/edit/:what' exact component={Accounts} />
+
+            <Route path='/bids/:uuid' exact component={Bid} />
+            <Route path='/bids/edit/:uuid' exact component={EditBid} />
+
+            <Route path='/asks/:asksFilter' exact component={AskFromBoard} />
 
             <Route path='/help' exact component={Help} />
             <Route path='/contact' exact component={Contact} />

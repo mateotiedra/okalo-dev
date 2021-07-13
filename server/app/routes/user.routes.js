@@ -11,7 +11,7 @@ module.exports = function (app) {
   });
 
   app.get('/api/user/u', [authJwt.verifyToken], controller.userBoard);
-  app.get('/api/user/:username', controller.otherUserBoard);
+  app.get('/api/user/:username', controller.getUserProfile);
 
   app.post(
     '/api/user/settings',

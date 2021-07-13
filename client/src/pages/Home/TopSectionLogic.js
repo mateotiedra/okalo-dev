@@ -4,6 +4,7 @@ const TopSectionLogic = (props) => {
     sm: 'h4',
     md: 'h3',
     lg: 'h2',
+    xl: 'h2',
   }[props.width];
 
   const wheelRadius = {
@@ -11,6 +12,7 @@ const TopSectionLogic = (props) => {
     sm: '350px',
     md: '400px',
     lg: '400px',
+    xl: 'h2',
   }[props.width];
 
   const emojisSize = {

@@ -57,6 +57,7 @@ export default function FieldsGroup(props) {
     if (field.props.passwordField) {
       return <PasswordField {...field.props} keyName={field.props.key} />;
     }
+
     return <TextField {...field.props} />;
   };
 

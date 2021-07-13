@@ -36,7 +36,7 @@ function Sell(props) {
     fieldsProps,
     formik,
     stepBack,
-    goBackToHome,
+    goToBids,
   } = SellLogic(props);
 
   if (pageStatus === 'loading') return <LoadingPage />;
@@ -47,15 +47,19 @@ function Sell(props) {
         title={'Annonce publié !'}
         body={`Ton annonce a été publié avec succès ! Tu seras informé dès que quelqu'un sera interressé par ton offre.`}
         ctaButton={{
-          children: 'Super',
-          onClick: goBackToHome,
+          children: 'Voir mes annonces',
+          onClick: goToBids,
         }}
       />
     );
   return (
     <>
       <Navbar />
-      <MobileContainer arrowTopPosition={'64px'} goBackFunction={stepBack}>
+      <MobileContainer
+        arrowTopPosition={'64px'}
+        goBackFunction={stepBack}
+        noNavBar
+      >
         <BlobAvatar className={classes.avatar}>
           <BiBook size={45} color='white' />
         </BlobAvatar>

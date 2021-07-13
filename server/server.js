@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 var corsOptions = {
   origin: process.env.APP_ORIGIN,
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   credentials: true,
 };
 
@@ -41,9 +41,10 @@ app.get('/api', (req, res) => {
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
 require('./app/routes/bid.routes')(app);
+require('./app/routes/ask.routes')(app);
 
 // set port, listen for requests
-const PORT = process.env.DB_PORT || 8080;
+const PORT = process.env.BACKEND_PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });

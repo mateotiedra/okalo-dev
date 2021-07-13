@@ -102,6 +102,7 @@ const AuthConfirmLogic = ({ history, location, match }) => {
       icon: <BiHourglass />,
       title: 'Lien expiré',
       body: 'Le lien que vous avez suivi a expiré.',
+      noGoBackArrow: true,
       ctaButton: {
         children: 'Recevoir un nouveau lien',
         onClick: goToResendingPage,
@@ -111,6 +112,7 @@ const AuthConfirmLogic = ({ history, location, match }) => {
       icon: <BiTrophy />,
       title: 'Inscription terminé',
       body: `Tu t'es inscrit avec succès ! Ton compte est maintenant prêt à être utilisé.`,
+      noGoBackArrow: true,
       ctaButton: {
         children: 'Super',
         onClick: goBackToHome,
@@ -145,11 +147,12 @@ const AuthConfirmLogic = ({ history, location, match }) => {
     alreadyActive: {
       icon: <BiUpsideDown />,
       title: 'Déjà confirmé',
+      noGoBackArrow: true,
       body: `L'adresse email${
         destinationEmail ? ` : ${destinationEmail}` : ''
       } a déjà été confirmée !`,
       ctaButton: {
-        children: 'Se connecter',
+        children: 'Parfait',
         onClick: goBackToHome,
       },
     },

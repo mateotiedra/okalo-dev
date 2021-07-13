@@ -1,30 +1,55 @@
-module.exports = (sequelize, Sequelize) => {
-  const Bid = sequelize.define('bid', {
-    title: {
-      type: Sequelize.STRING,
+module.exports = (sequelize, DataTypes) => {
+  const Bid = sequelize.define(
+    'bid',
+    {
+      uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV1,
+        primaryKey: true,
+      },
+      title: {
+        type: DataTypes.STRING,
+      },
+      author: {
+        type: DataTypes.STRING,
+      },
+      edition: {
+        type: DataTypes.STRING,
+      },
+      condition: {
+        type: DataTypes.STRING,
+      },
+      annotation: {
+        type: DataTypes.STRING,
+      },
+      note: {
+        type: DataTypes.STRING,
+      },
+      price: {
+        type: DataTypes.STRING,
+      },
+      status: {
+        type: DataTypes.STRING,
+        defaultValue: 'no deal',
+      },
     },
-    author: {
-      type: Sequelize.STRING,
-    },
-    edition: {
-      type: Sequelize.STRING,
-    },
-    condition: {
-      type: Sequelize.STRING,
-    },
-    annotation: {
-      type: Sequelize.STRING,
-    },
-    price: {
-      type: Sequelize.STRING,
-    },
-  });
+    {
+      paranoid: true,
+    }
+  );
 
   Bid.associate = (models) => {
     Bid.belongsTo(models.user, {
+      as: 'bidsOwned',
       foreignKey: {
+        name: 'ownerUuid',
         allowNull: false,
       },
+    });
+
+    Bid.belongsToMany(models.user, {
+      as: 'asks',
+      through: models.ask,
     });
   };
 

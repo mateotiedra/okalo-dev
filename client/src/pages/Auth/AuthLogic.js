@@ -28,8 +28,7 @@ const AuthLogic = ({ history, match }) => {
   const displaySignIn = match.params.option === 'login';
 
   const switchSignIn = () => {
-    history.push(`/auth/${displaySignIn ? 'signup' : 'login'}`);
-    window.location.reload();
+    history.replace(`/auth/${displaySignIn ? 'signup' : 'login'}`);
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +48,7 @@ const AuthLogic = ({ history, match }) => {
     axios
       .post(API_ORIGIN + '/api/auth/signup', {
         email: values.email,
-        username: values.username,
+        username: values.username.toLowerCase(),
         school: values.school,
         password: values.password,
       })
@@ -114,7 +113,7 @@ const AuthLogic = ({ history, match }) => {
           errorCodeEquals(err, 401) &&
           err.response.data.message.includes('Email')
         ) {
-          history.push({
+          history.replace({
             pathname: '/auth/confirm/pending',
             state: { email: err.response.data.destinationEmail },
           });

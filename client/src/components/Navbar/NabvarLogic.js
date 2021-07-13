@@ -48,7 +48,7 @@ const NavbarLogic = () => {
       displayed: !loggedIn,
     },
     {
-      title: 'Paramètre',
+      title: 'Paramètres',
       icon: <BiCog />,
       path: '/accounts/edit',
       displayed: loggedIn,
@@ -67,7 +67,12 @@ const NavbarLogic = () => {
       displayed: true,
     },
   ];
-  return { navDrawerOpen, openNavDrawer, closeNavDrawer, navLinksObj };
+  return {
+    navDrawerOpen,
+    openNavDrawer,
+    closeNavDrawer,
+    defaultNavLinksObj: navLinksObj,
+  };
 };
 
 export default NavbarLogic;

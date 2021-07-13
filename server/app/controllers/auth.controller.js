@@ -78,10 +78,10 @@ exports.signin = (req, res) => {
         });
       }
 
-      var token = jwt.sign({ id: user.id }, config.secret);
+      var token = jwt.sign({ uuid: user.uuid }, config.secret);
 
       res.status(200).send({
-        id: user.id,
+        uuid: user.uuid,
         username: user.username,
         email: user.email,
         accessToken: token,
@@ -168,7 +168,7 @@ exports.verifyuserConfirmation = (req, res) => {
           return res.status(500).send({ message: err });
         }
       });
-      var token = jwt.sign({ id: user.id }, config.secret);
+      var token = jwt.sign({ uuid: user.uuid }, config.secret);
       res.status(200).send({ accessToken: token });
     })
     .catch((e) => console.log('error', e));

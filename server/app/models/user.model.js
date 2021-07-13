@@ -1,35 +1,38 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const attributes = {
+    uuid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV1,
+      primaryKey: true,
+    },
     username: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     email: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     password: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     fullname: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
+    },
+    sales: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     phone: {
-      type: Sequelize.STRING,
-    },
-    insta: {
-      type: Sequelize.STRING,
-    },
-    snap: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     school: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     status: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       defaultValue: 'pending',
     },
     confirmationCode: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
   };
 
@@ -39,7 +42,17 @@ module.exports = (sequelize, Sequelize) => {
 
   User.associate = (models) => {
     User.hasMany(models.bid, {
+      as: 'bidsOwned',
+      foreignKey: {
+        name: 'ownerUuid',
+        allowNull: false,
+      },
       onDelete: 'cascade',
+    });
+
+    User.belongsToMany(models.bid, {
+      as: 'asks',
+      through: models.ask,
     });
   };
 

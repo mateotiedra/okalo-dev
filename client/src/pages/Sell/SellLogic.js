@@ -7,10 +7,12 @@ import axios from 'axios';
 
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
+import Helper from '../../helpers';
 
 const SellLogic = ({ history }) => {
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
+  const { sentence, capitalize } = Helper();
 
   const hasFetchedData = useRef(false);
   const [pageStatus, setPageStatus] = useState('loading');
@@ -20,11 +22,12 @@ const SellLogic = ({ history }) => {
     edition: '',
     condition: '',
     annotation: '',
+    note: '',
     price: '',
   });
 
-  const goBackToHome = () => {
-    history.push('/');
+  const goToBids = () => {
+    history.push('/users/u');
   };
 
   const saveNewBidData = (values, sendData = false) => {
@@ -43,11 +46,12 @@ const SellLogic = ({ history }) => {
       .post(
         API_ORIGIN + '/api/bid/new',
         {
-          title: values.title,
-          author: values.author,
-          edition: values.edition,
-          condition: values.condition,
-          annotation: values.annotation,
+          title: capitalize(values.title),
+          author: capitalize(values.author),
+          edition: capitalize(values.edition),
+          condition: sentence(values.condition),
+          annotation: sentence(values.annotation),
+          note: sentence(values.note),
           price: values.price,
         },
         {
@@ -57,15 +61,10 @@ const SellLogic = ({ history }) => {
         }
       )
       .then((res) => {
-        console.log(res);
         setPageStatus('success');
       })
       .catch((err) => {
-        if (getStatusCode(err) === 401) {
-          history.push('/auth/login');
-        } else {
-          console.log(err);
-        }
+        console.log(err);
       });
   };
 
@@ -73,7 +72,7 @@ const SellLogic = ({ history }) => {
 
   const stepBack = () => {
     if (procedureStep === 0) {
-      history.push('/');
+      history.goBack();
     } else {
       setProcedureStep(procedureStep - 1);
     }
@@ -96,6 +95,7 @@ const SellLogic = ({ history }) => {
       annotation: yup
         .string()
         .required("N'oublies pas d'indiquer à quel point le livre est annoté"),
+      note: yup.string().nullable(),
       price: yup
         .number('')
         .typeError(
@@ -127,6 +127,10 @@ const SellLogic = ({ history }) => {
       selectField: true,
       options: ['Pas annoté', 'Peu annoté', 'Annoté', 'Très annoté'],
     },
+    note: {
+      label: 'Remarque',
+      multiline: true,
+    },
     price: {
       label: 'Prix demandé (en francs)',
     },
@@ -145,6 +149,7 @@ const SellLogic = ({ history }) => {
       initialValues: {
         condition: '',
         annotation: '',
+        note: '',
         price: '',
       },
       validationSchema: fieldsSchema,
@@ -183,7 +188,7 @@ const SellLogic = ({ history }) => {
         setPageStatus('form');
       })
       .catch((err) => {
-        history.push('/auth/login');
+        history.replace('/auth/login');
       });
   }, [API_ORIGIN, history, setInterceptors, getStatusCode]);
 
@@ -194,7 +199,7 @@ const SellLogic = ({ history }) => {
     fieldsProps,
     formik,
     stepBack,
-    goBackToHome,
+    goToBids,
   };
 };
 

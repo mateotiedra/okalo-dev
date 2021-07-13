@@ -12,5 +12,13 @@ module.exports = function (app) {
 
   app.post('/api/bid/new', [authJwt.verifyToken], controller.newBid);
 
-  app.post('/api/bid/update', [authJwt.verifyToken], controller.changeBidInfo);
+  app.post(
+    '/api/bid/update',
+    [authJwt.verifyBidOwner],
+    controller.changeBidInfo
+  );
+
+  app.get('/api/bid/:uuid', controller.bidBoard);
+
+  app.delete('/api/bid', [authJwt.verifyBidOwner], controller.deleteBid);
 };

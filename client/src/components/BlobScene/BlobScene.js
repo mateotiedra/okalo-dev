@@ -32,12 +32,15 @@ function BlobScene({ children, width, onlyBackground, color }) {
   const theme = useTheme();
 
   const { randint } = Helper();
-  const device = {
-    xs: 'mobile',
-    sm: 'deskop',
-    md: 'deskop',
-    lg: 'deskop',
-  }[width];
+  const device =
+    {
+      xs: 'mobile',
+      sm: 'deskop',
+      md: 'deskop',
+      lg: 'deskop',
+      xl: 'deskop',
+    }[width] || 'deskop';
+
   const imgSrc = useRef(
     require(`../../assets/svgs/background/${device}/blob-scene-${randint(
       1,

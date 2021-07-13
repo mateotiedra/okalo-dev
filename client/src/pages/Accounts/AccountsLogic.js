@@ -34,10 +34,8 @@ const AccountsLogic = ({ history, match }) => {
         API_ORIGIN + '/api/user/settings',
         {
           fullname: values.fullname,
-          insta: values.insta,
           phone: values.phone,
           school: values.school,
-          snap: values.snap,
         },
         {
           headers: {
@@ -90,8 +88,6 @@ const AccountsLogic = ({ history, match }) => {
     email: yup.string().nullable(),
     password: yup.string().nullable(),
     phone: yup.string().min(7, 'Numéro de téléphone incorrect').nullable(),
-    insta: yup.string().nullable(),
-    snap: yup.string().nullable(),
   });
 
   const passwordSchema = yup.object({
@@ -133,12 +129,6 @@ const AccountsLogic = ({ history, match }) => {
       label: 'Numéro de téléphone',
       previousComponents: <></>,
     },
-    insta: {
-      label: 'Compte instragram',
-    },
-    snap: {
-      label: 'Compte snapchat',
-    },
     school: {
       label: 'Collège',
       selectField: true,
@@ -176,8 +166,6 @@ const AccountsLogic = ({ history, match }) => {
             email: '',
             password: '123456',
             phone: '',
-            insta: '',
-            snap: '',
           },
     validationSchema: fieldsSchema,
     onSubmit: pageStatus === 'password' ? saveNewPassword : saveNewValues,

@@ -5,13 +5,28 @@ import axios from 'axios';
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
 
+const Months = {
+  '01': 'janvier',
+  '02': 'février',
+  '03': 'mars',
+  '04': 'avril',
+  '05': 'mai',
+  '06': 'juin',
+  '07': 'juillet',
+  '08': 'août',
+  '09': 'septembre',
+  10: 'octobre',
+  11: 'novembre',
+  12: 'décembre',
+};
+
 const ProfileLogic = ({ history, match }) => {
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
 
-  const profileUsername = match.params.username;
+  const profileUsername = useRef(match.params.username);
 
-  const [displayedUserData, setDisplayedUserData] = useState();
+  const [profileData, setProfileData] = useState();
   const [userHimself, setUserHimself] = useState(false);
 
   const hasFetchedData = useRef(false);
@@ -23,50 +38,59 @@ const ProfileLogic = ({ history, match }) => {
 
     setInterceptors();
 
-    const getUserData = (next) => {
+    const getUserData = () => {
       axios
         .get(API_ORIGIN + '/api/user/u', {
           headers: {
             'x-access-token': localStorage.getItem('accessToken'),
           },
         })
-        .then((res) => {
-          console.log(res.data);
-          next(res.data);
+        .then(({ data }) => {
+          const user = data;
+          if (
+            user.username === profileUsername.current ||
+            profileUsername.current === 'u'
+          ) {
+            history.replace('/users/' + user.username);
+            setUserHimself(true);
+            profileUsername.current = user.username;
+          }
         })
         .catch((err) => {
-          if (profileUsername === 'u' && getStatusCode(err) === 401)
-            history.push('/auth/login');
-          next(false);
+          if (profileUsername.current === 'u' && getStatusCode(err) === 401)
+            history.replace('/auth/login');
+        })
+        .finally(() => {
+          getProfileData(profileUsername.current);
         });
     };
 
-    const getDisplayedUserData = () => {
+    const getProfileData = (username) => {
       axios
-        .get(API_ORIGIN + '/api/user/' + profileUsername)
-        .then((res) => {
+        .get(API_ORIGIN + '/api/user/' + username)
+        .then(({ data }) => {
+          const user = data;
+          const date = user.createdAt.split('-');
+          const dateSince = 'Membre depuis ' + Months[date[1]] + ' ' + date[0];
+          setProfileData({ ...user, userSince: dateSince });
           setPageStatus('default');
-          return { ...res.data };
         })
         .catch((err) => {
-          console.log(err);
-          return {};
+          if (getStatusCode(err) === 404) {
+            history.replace(history.location.pathname, {
+              errorStatusCode: 404,
+            });
+          }
         });
     };
 
-    getUserData((userData) => {
-      if (
-        userData &&
-        (profileUsername === 'u' || userData.username === profileUsername)
-      ) {
-        setDisplayedUserData(userData);
-        setUserHimself(true);
-        setPageStatus('default');
-      } else setDisplayedUserData(getDisplayedUserData());
-    });
+    // Starts here
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken || profileUsername.current === 'u') getUserData();
+    else getProfileData();
   }, [API_ORIGIN, history, profileUsername, setInterceptors, getStatusCode]);
 
-  return { displayedUserData, userHimself, pageStatus };
+  return { profileData, userHimself, pageStatus };
 };
 
 export default ProfileLogic;

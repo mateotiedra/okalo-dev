@@ -1,4 +1,6 @@
 import Page500 from '../../pages/errors/ServerError';
+import Page404 from '../../pages/errors/NotFoundError';
+import Page401 from '../../pages/errors/UnauthorizedError';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 
 import React from 'react';
@@ -16,6 +18,12 @@ const ErrorHandler = ({ children }) => {
   switch (errorStatusCode) {
     case 500:
       return <Page500 />;
+
+    case 404:
+      return <Page404 />;
+
+    case 401:
+      return <Page401 />;
 
     default:
       return children;

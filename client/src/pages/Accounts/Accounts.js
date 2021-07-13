@@ -112,12 +112,13 @@ function Accounts(props) {
   const contactSection = (
     <Box className={classes.sectionContainer}>
       <Typography component='h6' className={classes.sectionTitle}>
-        Moyens de contact
+        Moyen de contact
       </Typography>
       <Typography variant='body2' className={classes.sectionBody}>
-        Au moins un des moyens de contact (réseaux sociaux ou numéro de
-        téléphone) est nécessaire afin de pouvoir créer le contact entre vous et
-        le vendeur/acheteur. Ces informations ne seront pas rendues publiques.
+        Ton numéro de téléphone est nécessaire afin de pouvoir créer le contact
+        entre toi et le vendeur/acheteur. Ces informations sont communiquées
+        uniquement au moment de l'échange aux personnes que vous avez
+        précédement acceptées et ne sont donc pas rendues publiques.
       </Typography>
     </Box>
   );
@@ -171,7 +172,7 @@ function Accounts(props) {
               </>
             ),
           },
-          snap: { ...fieldsProps.snap, nextComponents: contactSection },
+          phone: { ...fieldsProps.phone, nextComponents: contactSection },
         }}
         formik={formik}
         fieldsVariant='standard'

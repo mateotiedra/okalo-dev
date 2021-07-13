@@ -5,21 +5,26 @@ const Bid = db.bid;
 
 var bcrypt = require('bcrypt');
 
+const basicsExclude = ['uuid', 'password', 'status', 'confirmationCode'];
+
 exports.userBoard = (req, res) => {
   User.findOne({
-    where: { id: req.userId },
+    where: { uuid: req.userId },
     include: {
       model: Bid,
+      as: 'bidsOwned',
       attributes: {
-        exclude: ['id', 'userId'],
+        exclude: ['userId'],
       },
     },
     attributes: {
-      exclude: ['password', 'confirmationCode'],
+      exclude: basicsExclude,
     },
   })
     .then((user) => {
-      res.status(200).send(user);
+      if (user) {
+        return res.status(200).send(user);
+      } else res.status(404).send({ message: 'user not found' });
     })
     .catch((err) => {
       console.log(err);
@@ -27,21 +32,28 @@ exports.userBoard = (req, res) => {
     });
 };
 
-exports.otherUserBoard = (req, res) => {
+exports.getUserProfile = (req, res) => {
   const username = req.params.username;
 
   User.findOne({
-    where: {
-      username: username,
+    where: { username: username },
+    include: {
+      model: Bid,
+      as: 'bidsOwned',
+      attributes: {
+        exclude: ['userId'],
+      },
+    },
+    attributes: {
+      exclude: [...basicsExclude, 'email', 'fullname', 'phone'],
     },
   })
     .then((user) => {
-      res
-        .status(200)
-        .send({ username: user.username, school: user.school, id: user.id });
+      if (user) return res.status(200).send(user);
+      else res.status(404).send({ message: 'user not found' });
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).send();
     });
 };
 
@@ -51,7 +63,7 @@ exports.changeUserSettings = (req, res) => {
   }
   return controllerHelper.changeObjectSettings(
     User,
-    ['fullname', 'insta', 'phone', 'school', 'snap', 'password'],
+    ['fullname', 'phone', 'school', 'password'],
     req.userId
   )(req, res);
 };
