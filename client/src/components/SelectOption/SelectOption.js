@@ -23,6 +23,7 @@ export default function PasswordField(props) {
       size={props.size}
       key={props.keyName}
       error={props.error}
+      style={props.style}
     >
       <InputLabel htmlFor='outlined-age-native-simple'>
         {props.label}
@@ -36,6 +37,7 @@ export default function PasswordField(props) {
           name: selectName,
           id: props.variant + '-' + selectName + '-native-simple',
         }}
+        fullWidth
       >
         <option aria-label='None' value='' />
         {props.children}

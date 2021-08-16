@@ -1,15 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BiCog } from 'react-icons/bi';
+import { BiCog, BiTrash } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Box, Container } from '@material-ui/core';
+import {
+  Typography,
+  Box,
+  Container,
+  Link as MaterialLink,
+} from '@material-ui/core';
 
 import ProfileLogic from './ProfileLogic';
 
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import AlertPage from '../../components/AlertPage/AlertPage';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
-import BidCard from '../../components/BidCard/BidCard';
+import BidsCardContainer from '../../components/BidsCardContainer/BidsCardContainer';
 import Navbar from '../../components/Navbar/Navbar';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,10 +58,22 @@ const useStyles = makeStyles((theme) => ({
 
 function Profile(props) {
   const classes = useStyles();
-  const { profileData, userHimself, pageStatus } = ProfileLogic(props);
+  const { profileData, userHimself, pageStatus, goToBids, smsHref, emailHref } =
+    ProfileLogic(props);
 
   if (pageStatus === 'loading') return <LoadingPage />;
-
+  else if (pageStatus === 'biddeleted')
+    return (
+      <AlertPage
+        icon={<BiTrash />}
+        title={'Annonce supprimée !'}
+        body={`Ton annonce a bien été supprimée !`}
+        ctaButton={{
+          children: 'Voir mes annonces',
+          onClick: goToBids,
+        }}
+      />
+    );
   return (
     <>
       <Navbar />
@@ -72,7 +90,25 @@ function Profile(props) {
             <Typography variant='body'>
               {profileData.userSince}
               <br />
-              {profileData.sales} ventes
+              {'Étudiant au ' + profileData.school}
+              <br />
+              {!userHimself && (
+                <>
+                  {profileData.email && (
+                    <>
+                      <MaterialLink href={emailHref}>
+                        {profileData.email}
+                      </MaterialLink>
+                      <br />
+                    </>
+                  )}
+                  {profileData.phone && (
+                    <MaterialLink href={smsHref}>
+                      {profileData.phone}
+                    </MaterialLink>
+                  )}
+                </>
+              )}
             </Typography>
           </Box>
           {userHimself && (
@@ -86,12 +122,7 @@ function Profile(props) {
           )}
         </Box>
       </MobileContainer>
-      <Container maxWidth='md' className={classes.bidsContainer}>
-        {profileData.bidsOwned.map((bid) => {
-          return <BidCard displayPrice className={classes.bidCard} {...bid} />;
-        })}
-        <BidCard className={classes.bidCard} addBidCover />
-      </Container>
+      <BidsCardContainer bids={profileData.bidsOwned} addable={userHimself} />
     </>
   );
 }

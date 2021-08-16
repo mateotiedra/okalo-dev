@@ -12,44 +12,71 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Box,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+
+import { BiSearch, BiMenu } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
 
 import NavbarLogic from './NabvarLogic';
+import SearchBar from '../pageParts/SearchBar/SearchBar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   menuButton: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
+  navContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
   navLinks: {
     display: 'none',
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'flex',
       gap: theme.spacing(1),
     },
   },
-  navContainer: {
-    justifyContent: 'space-between',
+  titleAndSearch: {
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      flex: 1,
+      marginRight: theme.spacing(5),
+      maxWidth: theme.spacing(100),
+    },
   },
   title: {
     fontWeight: 'bold',
-    [theme.breakpoints.up('sm')]: {},
+    [theme.breakpoints.up('md')]: {},
+  },
+  searchBar: {
+    flex: 1,
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   list: { width: '75vw' },
   listItem: { padding: theme.spacing(3) },
 }));
 
-export default function Navbar({ title, persoNavLinksObj }) {
+export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
   const classes = useStyles();
 
-  const { navDrawerOpen, openNavDrawer, closeNavDrawer, defaultNavLinksObj } =
-    NavbarLogic();
+  const {
+    navDrawerOpen,
+    openNavDrawer,
+    closeNavDrawer,
+    defaultNavLinksObj,
+    history,
+    goToSearch,
+  } = NavbarLogic();
 
   const navLinksObj = persoNavLinksObj || defaultNavLinksObj;
 
@@ -90,6 +117,7 @@ export default function Navbar({ title, persoNavLinksObj }) {
       </div>
     </SwipeableDrawer>
   );
+
   return (
     <div className={classes.root}>
       <AppBar position='fixed' color='inherit' elevation={2}>
@@ -101,17 +129,31 @@ export default function Navbar({ title, persoNavLinksObj }) {
             aria-label='menu'
             onClick={openNavDrawer}
           >
-            <MenuIcon />
+            <BiMenu />
           </IconButton>
-          <Typography
-            variant='h5'
-            className={classes.title}
-            component={Link}
+          <div className={classes.titleAndSearch}>
+            <Typography
+              variant='h5'
+              className={classes.title}
+              component={Link}
+              color='inherit'
+              to={'/'}
+            >
+              {title || 'okalo'}
+            </Typography>
+            {!hideSearchBar && (
+              <SearchBar history={history} className={classes.searchBar} />
+            )}
+          </div>
+          <IconButton
+            edge='end'
+            className={classes.menuButton}
             color='inherit'
-            to={'/'}
+            aria-label='menu'
+            onClick={goToSearch}
           >
-            {title || 'okalo'}
-          </Typography>
+            <BiSearch />
+          </IconButton>
           <div className={classes.navLinks}>
             {navLinksObj.map((link) => {
               if (link.displayed) {

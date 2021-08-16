@@ -1,11 +1,14 @@
-const TopSectionLogic = (props) => {
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+
+const TopSectionLogic = ({ width, history, ...other }) => {
   const typoVariant = {
     xs: 'h4',
     sm: 'h4',
     md: 'h3',
     lg: 'h2',
     xl: 'h2',
-  }[props.width];
+  }[width];
 
   const wheelRadius = {
     xs: '220px',
@@ -13,16 +16,20 @@ const TopSectionLogic = (props) => {
     md: '400px',
     lg: '400px',
     xl: 'h2',
-  }[props.width];
+  }[width];
 
   const emojisSize = {
     xs: 40,
     sm: 55,
     md: 60,
     lg: 65,
-  }[props.width];
+  }[width];
 
-  return { typoVariant, wheelRadius, emojisSize };
+  return {
+    typoVariant,
+    wheelRadius,
+    emojisSize,
+  };
 };
 
 export default TopSectionLogic;

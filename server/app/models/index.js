@@ -22,7 +22,6 @@ db.Op = Sequelize.Op;
 
 db.user = require('./user.model.js')(sequelize, Sequelize);
 db.bid = require('./bid.model.js')(sequelize, Sequelize);
-db.ask = require('./ask.model.js')(sequelize, Sequelize);
 
 db.user.associate(db);
 db.bid.associate(db);

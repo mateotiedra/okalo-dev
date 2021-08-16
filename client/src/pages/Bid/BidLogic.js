@@ -15,145 +15,68 @@ const BidLogic = ({ history, match }) => {
   const hasFetchedData = useRef(false);
 
   const [state, setState] = useState({});
-  const [pageLoading, setPageLoading] = useState(true);
-  const [userRole, setUserRole] = useState('user');
-  const [bidStatus, setBidStatus] = useState('no deal');
 
-  const pageStatus = pageLoading ? 'loading' : userRole + ' ' + bidStatus;
-  console.log(pageStatus);
+  const [pageStatus, setPageStatus] = useState('loading');
 
-  const handleCloseAlert = () => {
-    setAlertData(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const deleteReasonOptions = [
+    'Le livre a été vendu',
+    'Je ne souhaite plus vendre ce livre',
+  ];
+  const [deleteReason, setDeleteReason] = useState(deleteReasonOptions[0]);
+
+  const handleDeleteReasonChange = (event) => {
+    setDeleteReason(event.target.value);
   };
 
-  const alertsData = [
-    {
-      title: 'Demande envoyée',
-      body: "La demande d'achat a bien été envoyé à l'annonceur. Tu seras informé dès qu'il l'aura accepté et la plateforme vous mettra en contact à ce moment là",
-      buttons: [
-        {
-          text: 'Annuler la demande',
-          action: () => {
-            cancelAsk();
-            handleCloseAlert();
-          },
-        },
-        { text: 'Ok', action: handleCloseAlert },
-      ],
-    },
-    {
-      title: 'Demande annulée',
-      body: "Ta demande d'achat a été annulé. L'annonceur ne verra plus que tu es intéressé par cette annonce.",
-      buttons: [{ text: 'Ok', action: handleCloseAlert }],
-    },
-  ];
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
 
-  const [alertData, setAlertData] = useState(false);
-
-  const newAsk = () => {
-    axios
-      .post(
-        API_ORIGIN + '/api/ask',
-        {},
-        {
+  const deleteBid = () => {
+    if (alertOpen) {
+      setPageStatus('loading');
+      axios
+        .delete(API_ORIGIN + '/api/bid', {
           headers: {
             'x-access-token': localStorage.getItem('accessToken'),
             bidid: bidUuid,
+            'bid-status': ['sold', 'deleted'][
+              deleteReasonOptions.indexOf(deleteReason)
+            ],
           },
-        }
-      )
-      .then(() => {
-        setAlertData(alertsData[0]);
-        setUserRole('asker');
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
-
-  const cancelAsk = () => {
-    axios
-      .delete(API_ORIGIN + '/api/ask', {
-        headers: {
-          'x-access-token': localStorage.getItem('accessToken'),
-          bidid: bidUuid,
-        },
-      })
-      .then(() => {
-        setAlertData(alertsData[1]);
-        setUserRole('user');
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
-
-  const cancelButton = {
-    text: 'Annuler la demande',
-    action: cancelAsk,
-    variant: 'outlined',
+        })
+        .then((res) => {
+          history.push('/users/u/biddeleted');
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+    } else {
+      setAlertOpen(true);
+    }
   };
 
   const pageData = {
-    'owner in deal': {
+    owner: {
       buttons: [
         {
-          text: 'Annuler le deal',
-          action: () => {},
-          variant: 'outlined',
-        },
-        {
-          text: 'Livre vendu',
-          action: () => {},
-          variant: 'outlined',
+          children: "Supprimer l'annonce",
+          onClick: deleteBid,
         },
       ],
     },
-    'owner no deal': {
+    user: {
       buttons: [
         {
-          text: 'Voir les demandes',
-          action: () => {
-            history.push('/asks/' + bidUuid);
+          children: "Contacter l'annonceur",
+          onClick: () => {
+            history.push('/users/' + state.seller.username);
           },
-        },
-      ],
-    },
-    'user in deal': {
-      buttons: [
-        {
-          text: 'Annuler le deal',
-          action: () => {},
         },
         ,
       ],
-    },
-    'user no deal': {
-      buttons: [
-        {
-          text: "Faire une demande d'achat",
-          action: newAsk,
-        },
-      ],
-    },
-    'asker in deal': {
-      buttons: [cancelButton],
-    },
-    'askerDealer in deal': {
-      buttons: [
-        {
-          text: 'Annuler le deal',
-          action: cancelAsk,
-          variant: 'outlined',
-        },
-        {
-          text: "Contacter l'annonceur",
-          ctaFunction: () => {},
-        },
-      ],
-    },
-    'asker no deal': {
-      buttons: [cancelButton],
     },
   }[pageStatus] || { buttons: [] };
 
@@ -175,11 +98,9 @@ const BidLogic = ({ history, match }) => {
           ...state,
           bidData: data.bid,
           userHimself: data.bidOwner,
-          username: data.username,
+          seller: { username: data.username, school: data.school },
         });
-        setUserRole(data.bidOwner ? 'owner' : data.bidAsker ? 'asker' : 'user');
-        setBidStatus(data.bid.status);
-        setPageLoading(false);
+        setPageStatus(data.bidOwner ? 'owner' : 'user');
       })
       .catch((err) => {
         if (getStatusCode(err) === 404) {
@@ -193,14 +114,16 @@ const BidLogic = ({ history, match }) => {
   return {
     bidData: state.bidData,
     userHimself: state.userHimself || false,
-    username: state.username,
+    seller: state.seller,
     pageStatus,
     editLink: `/bids/edit/${bidUuid}`,
     pageData,
-    alertData,
     handleCloseAlert,
-    cancelAsk,
-    alertData,
+    alertOpen,
+    deleteReason,
+    handleDeleteReasonChange,
+    deleteReasonOptions,
+    deleteBid,
   };
 };
 

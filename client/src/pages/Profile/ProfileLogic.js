@@ -24,13 +24,20 @@ const ProfileLogic = ({ history, match }) => {
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
 
-  const profileUsername = useRef(match.params.username);
+  const profileUsername = useRef(match.params.username || 'u');
+  const urlPageStatus = match.params.pageStatus;
 
   const [profileData, setProfileData] = useState();
   const [userHimself, setUserHimself] = useState(false);
 
   const hasFetchedData = useRef(false);
   const [pageStatus, setPageStatus] = useState('loading');
+
+  const smsHref = profileData ? 'sms://' + profileData.phone : '';
+  const emailHref = profileData ? 'mailto://' + profileData.email : '';
+  const goToBids = () => {
+    setPageStatus('bids');
+  };
 
   useEffect(() => {
     if (hasFetchedData.current) return;
@@ -57,8 +64,7 @@ const ProfileLogic = ({ history, match }) => {
           }
         })
         .catch((err) => {
-          if (profileUsername.current === 'u' && getStatusCode(err) === 401)
-            history.replace('/auth/login');
+          if (profileUsername.current === 'u') history.replace('/auth/login');
         })
         .finally(() => {
           getProfileData(profileUsername.current);
@@ -73,7 +79,8 @@ const ProfileLogic = ({ history, match }) => {
           const date = user.createdAt.split('-');
           const dateSince = 'Membre depuis ' + Months[date[1]] + ' ' + date[0];
           setProfileData({ ...user, userSince: dateSince });
-          setPageStatus('default');
+          console.log(user);
+          setPageStatus(urlPageStatus || 'bids');
         })
         .catch((err) => {
           if (getStatusCode(err) === 404) {
@@ -88,9 +95,16 @@ const ProfileLogic = ({ history, match }) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken || profileUsername.current === 'u') getUserData();
     else getProfileData();
-  }, [API_ORIGIN, history, profileUsername, setInterceptors, getStatusCode]);
+  }, [
+    API_ORIGIN,
+    history,
+    profileUsername,
+    setInterceptors,
+    getStatusCode,
+    urlPageStatus,
+  ]);
 
-  return { profileData, userHimself, pageStatus };
+  return { profileData, userHimself, pageStatus, goToBids, smsHref, emailHref };
 };
 
 export default ProfileLogic;

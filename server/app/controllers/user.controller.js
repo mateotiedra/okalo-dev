@@ -41,11 +41,11 @@ exports.getUserProfile = (req, res) => {
       model: Bid,
       as: 'bidsOwned',
       attributes: {
-        exclude: ['userId'],
+        exclude: ['ownerUuid'],
       },
     },
     attributes: {
-      exclude: [...basicsExclude, 'email', 'fullname', 'phone'],
+      exclude: [...basicsExclude, 'fullname'],
     },
   })
     .then((user) => {

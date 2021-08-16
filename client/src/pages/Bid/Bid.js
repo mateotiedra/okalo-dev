@@ -12,8 +12,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@material-ui/core';
 
 import BidLogic from './BidLogic';
@@ -113,10 +115,13 @@ function Bid(props) {
     pageStatus,
     editLink,
     pageData,
-    username,
-    alertData,
+    seller,
     handleCloseAlert,
-    cancelAsk,
+    alertOpen,
+    deleteBid,
+    handleDeleteReasonChange,
+    deleteReason,
+    deleteReasonOptions,
   } = BidLogic(props);
 
   const { sentence } = Helper();
@@ -140,6 +145,42 @@ function Bid(props) {
 
   if (pageStatus === 'loading') return <LoadingPage />;
 
+  const ownerDialog = (
+    <Dialog
+      open={alertOpen}
+      onClose={handleCloseAlert}
+      aria-labelledby='delete-bid'
+      aria-describedby='delete-bid'
+    >
+      <DialogTitle id='delete-bid'>Supprimer l'annonce</DialogTitle>
+      <DialogContent>
+        <RadioGroup
+          aria-label='deleteReason'
+          name='deleteReason'
+          value={deleteReason}
+          onChange={handleDeleteReasonChange}
+        >
+          {deleteReasonOptions.map((option) => (
+            <FormControlLabel
+              value={option}
+              key={option}
+              control={<Radio />}
+              label={option}
+            />
+          ))}
+        </RadioGroup>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseAlert} color='primary'>
+          Annuler
+        </Button>
+        <Button onClick={deleteBid} color='primary' autoFocus>
+          Supprimer
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
     <>
       <Navbar />
@@ -152,9 +193,9 @@ function Bid(props) {
               <MaterialLink
                 variant='inherit'
                 component={Link}
-                to={'/users/' + username}
+                to={'/users/' + seller.username}
               >
-                {username}
+                {seller.username}
               </MaterialLink>
             </Typography>
           </Box>
@@ -175,6 +216,13 @@ function Bid(props) {
               component='h4'
               variant='h6'
               className={classes.stateInfo + ' ' + classes.sentenceText}
+            >
+              {sentence('Vendu au ' + seller.school)}
+            </Typography>
+            <Typography
+              component='h4'
+              variant='h6'
+              className={classes.sentenceText}
             >
               {sentence(bidData.annotation, true)}
               <Typography
@@ -212,49 +260,12 @@ function Bid(props) {
           )}
         </div>
         <div className={classes.ctaContainer}>
-          {pageStatus === 'in deal' && (
-            <Button color='primary' variant='outlined'>
-              Annuler le deal
-            </Button>
-          )}
-          <Button
-            color='primary'
-            variant={pageData.ctaVariant || 'contained'}
-            onClick={pageData.ctaFunction}
-          >
-            {pageData.ctaText}
-          </Button>
+          {pageData.buttons.map((button) => {
+            return <Button color='primary' variant='contained' {...button} />;
+          })}
         </div>
       </MobileContainer>
-      {Boolean(alertData) && (
-        <Dialog
-          open={Boolean(alertData)}
-          onClose={handleCloseAlert}
-          aria-labelledby='delete-bid'
-          aria-describedby='delete-bid'
-        >
-          <DialogTitle id='delete-bid'>{alertData.title}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id='delete-bid'>
-              {alertData.body}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={alertData.buttons[0].action} color='primary'>
-              {alertData.buttons[0].text}
-            </Button>
-            {alertData.buttons.length > 1 && (
-              <Button
-                onClick={alertData.buttons[1].action}
-                color='primary'
-                autoFocus
-              >
-                {alertData.buttons[1].text}
-              </Button>
-            )}
-          </DialogActions>
-        </Dialog>
-      )}
+      {pageStatus === 'owner' ? ownerDialog : <></>}
     </>
   );
 }

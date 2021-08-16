@@ -2,11 +2,11 @@ import React from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import TopSection from './TopSection';
 
-function Home() {
+function Home(props) {
   return (
     <>
       <Navbar />
-      <TopSection />
+      <TopSection {...props} />
     </>
   );
 }

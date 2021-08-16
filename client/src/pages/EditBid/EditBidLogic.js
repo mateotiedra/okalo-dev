@@ -41,7 +41,7 @@ const EditBidLogic = ({ history, match }) => {
           },
         })
         .then((res) => {
-          setPageStatus('bid deleted');
+          history.push('/users/u/biddeleted');
         })
         .catch((err) => {
           console.log(err);

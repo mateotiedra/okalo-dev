@@ -5,6 +5,8 @@ import * as yup from 'yup';
 
 import axios from 'axios';
 
+import websiteData from '../../assets/data/website.json';
+
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
 
@@ -87,7 +89,12 @@ const AccountsLogic = ({ history, match }) => {
     username: yup.string().nullable(),
     email: yup.string().nullable(),
     password: yup.string().nullable(),
-    phone: yup.string().min(7, 'Numéro de téléphone incorrect').nullable(),
+    phone: yup
+      .string("Tu as besoin dd'un numéro de téléphone")
+      .matches(
+        /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
+        'Numéro de téléphone incorrect'
+      ),
   });
 
   const passwordSchema = yup.object({
@@ -130,9 +137,9 @@ const AccountsLogic = ({ history, match }) => {
       previousComponents: <></>,
     },
     school: {
-      label: 'Collège',
+      label: 'Établissement',
       selectField: true,
-      options: ['De Saussure', 'Andrée Chavanne', 'Sismondi'],
+      options: websiteData.availableSchools,
     },
     password: {
       passwordField: true,
@@ -164,7 +171,7 @@ const AccountsLogic = ({ history, match }) => {
             school: '',
             username: '',
             email: '',
-            password: '123456',
+            password: match.params.what === 'password' ? '' : '123456',
             phone: '',
           },
     validationSchema: fieldsSchema,
@@ -184,8 +191,8 @@ const AccountsLogic = ({ history, match }) => {
 
   const goToGeneralSettings = () => {
     formik.setFieldValue('password', '123456');
-    history.push('/accounts/edit');
     setPageStatus('general');
+    history.goBack();
   };
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, withWidth } from '@material-ui/core';
-import { BiPlusCircle } from 'react-icons/bi';
+import { BiPlusCircle, BiConfused } from 'react-icons/bi';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,9 +61,6 @@ const useStyles = makeStyles((theme) => ({
       right: theme.spacing(1),
       bottom: theme.spacing(1),
     },
-    backgroundColor: 'white',
-    borderRadius: '10%',
-    padding: '0.2em 0.3em',
     maxWidth: '80%',
   },
   secondaryInfos: {
@@ -71,6 +68,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
+  },
+  whiteBackground: {
+    backgroundColor: 'white',
+    borderRadius: '0.3em',
+    padding: '0.2em 0.3em',
   },
 }));
 
@@ -127,14 +129,18 @@ function BidCard({
                 <Typography
                   component='h2'
                   variant='body1'
-                  className={`${classes.title} ${classes.bidText}`}
+                  className={`${classes.title} ${classes.bidText} ${classes.whiteBackground}`}
                   noWrap={width === 'xs'}
                 >
                   {title}
                 </Typography>
               </div>
 
-              <div className={classes.secondaryInfos}>
+              <div
+                className={
+                  classes.secondaryInfos + ' ' + classes.whiteBackground
+                }
+              >
                 <Typography
                   component='h3'
                   variant='subtitle1'
@@ -160,7 +166,7 @@ function BidCard({
             component='h4'
             variant='body1'
             noWrap
-            className={classes.price}
+            className={classes.price + ' ' + classes.whiteBackground}
           >
             {price}.-
           </Typography>

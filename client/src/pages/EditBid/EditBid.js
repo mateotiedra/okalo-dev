@@ -66,7 +66,6 @@ function EditBid(props) {
     deleteBid,
     handleCloseDelete,
     openDelete,
-    goToBids,
   } = EditBidLogic(props);
 
   const successAlert = (
@@ -91,18 +90,7 @@ function EditBid(props) {
   );
 
   if (pageStatus === 'loading') return <LoadingPage />;
-  else if (pageStatus === 'bid deleted')
-    return (
-      <AlertPage
-        icon={<BiTrash />}
-        title={'Annonce supprimée !'}
-        body={`Ton annonce a bien été supprimée !`}
-        ctaButton={{
-          children: 'Voir mes annonces',
-          onClick: goToBids,
-        }}
-      />
-    );
+
   return (
     <MobileContainer>
       <FormHeader icon={<BiCog />} title="Modifier l'annonce" />

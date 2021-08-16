@@ -2,8 +2,65 @@ const { authJwt } = require('../middleware');
 const controllerHelper = require('./helper');
 const db = require('../models');
 const Op = db.Sequelize.Op;
+const sequelize = db.sequelize;
 const User = db.user;
 const Bid = db.bid;
+
+exports.searchBids = (req, res) => {
+  const { searchTitle, searchAuthor, searchEdition, searchSchool } = req.query;
+
+  const whereClause = {
+    [Op.and]: [
+      ...(searchTitle
+        ? [
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('title')), {
+              [Op.like]: `${searchTitle}%`,
+            }),
+          ]
+        : []),
+      ...(searchAuthor
+        ? [
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('author')), {
+              [Op.like]: `%${searchAuthor}%`,
+            }),
+          ]
+        : []),
+      ...(searchEdition
+        ? [
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('edition')), {
+              [Op.like]: `%${searchEdition}%`,
+            }),
+          ]
+        : []),
+    ],
+  };
+
+  Bid.findAll({
+    where: whereClause,
+    attributes: {
+      exclude: ['ownerUuid'],
+    },
+    include: [
+      {
+        model: User,
+        as: 'bidsOwned',
+        attributes: ['school'],
+      },
+    ],
+  })
+    .then((bids) => {
+      if (searchSchool)
+        bids = bids.filter((bid) => bid.bidsOwned.school === searchSchool);
+
+      if (bids && bids.length) return res.status(200).send(bids);
+
+      return res.status(404).send({ message: 'Bid not found' });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send();
+    });
+};
 
 exports.bidBoard = (req, res) => {
   const token = req.headers['x-access-token'];
@@ -16,32 +73,22 @@ exports.bidBoard = (req, res) => {
       {
         model: User,
         as: 'bidsOwned',
-        attributes: ['username'],
-      },
-      {
-        model: User,
-        as: 'asks',
-        where: { uuid: userUuid },
-        attributes: ['uuid'],
-        required: false,
+        attributes: ['username', 'school'],
       },
     ],
   })
     .then((bid) => {
       if (bid) {
         const bidOwner = userUuid === bid.ownerUuid;
-        const bidAsker = bid.asks.length > 0
-        var bidAskerInDeal = false
-        bid.asks.forEach(ask => {
-          if(ask.uuid === userUuid) bidAskerInDeal=true
-        });
 
         delete bid.dataValues.ownerUuid;
-        delete bid.asks;
 
-        return res
-          .status(200)
-          .send({ bid, bidOwner, username: bid.bidsOwned.username, bidAsker, bidAskerInDeal });
+        return res.status(200).send({
+          bid,
+          bidOwner,
+          username: bid.bidsOwned.username,
+          school: bid.bidsOwned.school,
+        });
       }
 
       return res.status(404).send({ message: 'Bid not found' });
@@ -75,27 +122,27 @@ exports.newBid = (req, res) => {
     });
 };
 
-exports.deleteBid = (req, res) => {
+exports.deleteBid = async (req, res) => {
   const uuid = req.headers['bidid'];
-  Bid.destroy({
+  const newBidStatus = req.headers['bid-status'];
+  const bid = await Bid.findOne({
     where: {
       uuid: uuid,
     },
-  })
-    .then(() => {
-      res.status(200).send({
-        message: 'Bid deleted successfully!',
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+
+  if (!bid) return res.status('404').send({ message: 'Bid not found!', err });
+
+  bid.status = newBidStatus || 'deleted';
+  await bid.save();
+  await bid.destroy();
+  return res.status(200).send({ message: 'Bid well deleted!' });
 };
 
 exports.changeBidInfo = (req, res) => {
   return controllerHelper.changeObjectSettings(
     Bid,
     ['title', 'author', 'edition', 'condition', 'annotation', 'note', 'price'],
-    req.body.bidId
+    req.headers['bidid']
   )(req, res);
 };

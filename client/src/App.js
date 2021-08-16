@@ -12,7 +12,7 @@ import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Profile from './pages/Profile/Profile';
 import Accounts from './pages/Accounts/Accounts';
 import Help from './pages/Help/Help';
-import Contact from './pages/Contact/Contact';
+import Search from './pages/Search/Search';
 import Sell from './pages/Sell/Sell';
 import Faq from './pages/Faq/Faq';
 import NotFoundError from './pages/errors/NotFoundError';
@@ -42,6 +42,7 @@ function App() {
             />
 
             <Route path='/users/:username' exact component={Profile} />
+            <Route path='/users/u/:pageStatus' exact component={Profile} />
 
             <Route path='/accounts/edit' exact component={Accounts} />
             <Route path='/accounts/edit/:what' exact component={Accounts} />
@@ -52,7 +53,7 @@ function App() {
             <Route path='/asks/:asksFilter' exact component={AskFromBoard} />
 
             <Route path='/help' exact component={Help} />
-            <Route path='/contact' exact component={Contact} />
+            <Route path='/search' exact component={Search} />
             <Route path='/sell' exact component={Sell} />
             <Route path='/faq' exact component={Faq} />
             <Route component={NotFoundError} />

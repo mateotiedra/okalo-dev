@@ -49,11 +49,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'cascade',
     });
-
-    User.belongsToMany(models.bid, {
-      as: 'asks',
-      through: models.ask,
-    });
   };
 
   return User;

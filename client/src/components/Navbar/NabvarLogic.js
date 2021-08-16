@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   BiQuestionMark,
   BiEnvelope,
@@ -10,6 +12,7 @@ import {
 } from 'react-icons/bi';
 
 const NavbarLogic = () => {
+  let history = useHistory();
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
 
   const openNavDrawer = () => {
@@ -24,15 +27,9 @@ const NavbarLogic = () => {
 
   const navLinksObj = [
     {
-      title: 'Aide',
+      title: 'Aide & contact',
       icon: <BiQuestionMark />,
       path: '/help',
-      displayed: true,
-    },
-    {
-      title: 'Contact',
-      icon: <BiEnvelope />,
-      path: '/contact',
       displayed: true,
     },
     {
@@ -67,11 +64,18 @@ const NavbarLogic = () => {
       displayed: true,
     },
   ];
+
+  const goToSearch = () => {
+    history.push('/search');
+  };
+
   return {
     navDrawerOpen,
     openNavDrawer,
     closeNavDrawer,
     defaultNavLinksObj: navLinksObj,
+    history,
+    goToSearch,
   };
 };
 

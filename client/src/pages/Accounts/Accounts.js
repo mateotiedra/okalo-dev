@@ -116,9 +116,7 @@ function Accounts(props) {
       </Typography>
       <Typography variant='body2' className={classes.sectionBody}>
         Ton numéro de téléphone est nécessaire afin de pouvoir créer le contact
-        entre toi et le vendeur/acheteur. Ces informations sont communiquées
-        uniquement au moment de l'échange aux personnes que vous avez
-        précédement acceptées et ne sont donc pas rendues publiques.
+        entre toi et les acheteurs.
       </Typography>
     </Box>
   );

@@ -17,6 +17,7 @@ module.exports = function (app) {
     [authJwt.verifyBidOwner],
     controller.changeBidInfo
   );
+  app.get('/api/bid/search', controller.searchBids);
 
   app.get('/api/bid/:uuid', controller.bidBoard);
 

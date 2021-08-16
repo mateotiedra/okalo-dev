@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+
 import axios from 'axios';
+
+import websiteData from '../../assets/data/website.json';
 
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -50,6 +53,7 @@ const AuthLogic = ({ history, match }) => {
         email: values.email,
         username: values.username.toLowerCase(),
         school: values.school,
+        phone: values.phone,
         password: values.password,
       })
       .then((res) => {
@@ -137,6 +141,13 @@ const AuthLogic = ({ history, match }) => {
         "Les espaces et les charactères spéciaux ne sont pas autorisés (sauf le point, l'underscore et le tiret)"
       )
       .required("N'oublies pas de donner ton nom d'utilisateur"),
+    phone: yup
+      .string('Entres ton numéro de téléphone')
+      .matches(
+        /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
+        'Numéro de téléphone incorrect'
+      )
+      .required("N'oublies pas de donner ton nom d'utilisateur"),
     school: yup.string(),
     password: yup
       .string('Entres ton mot de passe')
@@ -171,7 +182,14 @@ const AuthLogic = ({ history, match }) => {
   const formik = useFormik({
     initialValues: displaySignIn
       ? { emailOrUsername: '', password: '' }
-      : { email: '', username: '', school: '', password: '', passwordConf: '' },
+      : {
+          email: '',
+          username: '',
+          phone: '',
+          school: '',
+          password: '',
+          passwordConf: '',
+        },
     validationSchema: fieldsSchema,
     onSubmit: (values) => {
       if (displaySignIn) {
@@ -191,15 +209,19 @@ const AuthLogic = ({ history, match }) => {
     username: {
       label: "Nom d'utilisateur",
     },
+    phone: {
+      label: 'Numéro de téléphone',
+      autoComplete: 'phone',
+    },
     emailOrUsername: {
       label: "Email ou nom d'utilisateur",
       autoComplete: 'email',
       autoFocus: !onMobile,
     },
     school: {
-      label: 'Collège',
+      label: 'Établissement',
       selectField: true,
-      options: ['De Saussure', 'Andrée Chavanne', 'Sismondi'],
+      options: websiteData.availableSchools,
     },
     password: {
       passwordField: true,

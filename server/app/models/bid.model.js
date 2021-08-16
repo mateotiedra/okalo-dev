@@ -29,8 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       status: {
-        type: DataTypes.STRING,
-        defaultValue: 'no deal',
+        type: DataTypes.ENUM,
+        values: ['pending', 'deleted', 'sold'],
+        defaultValue: 'pending',
       },
     },
     {
@@ -45,11 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         name: 'ownerUuid',
         allowNull: false,
       },
-    });
-
-    Bid.belongsToMany(models.user, {
-      as: 'asks',
-      through: models.ask,
     });
   };
 

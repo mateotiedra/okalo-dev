@@ -8,6 +8,7 @@ const AxiosConfig = (axios, history) => {
         return response;
       },
       function (err) {
+
         if (!err.response || err.response.status >= 500) {
           history.replace(history.location.pathname, {
             errorStatusCode: 500,

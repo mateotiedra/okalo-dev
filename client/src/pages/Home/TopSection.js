@@ -13,6 +13,7 @@ import {
 
 import TopSectionLogic from './TopSectionLogic';
 import BlobScene from '../../components/BlobScene/BlobScene';
+import SearchBar from '../../components/pageParts/SearchBar/SearchBar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,7 +56,8 @@ const useStyles = makeStyles((theme) => ({
 function TopSection(props) {
   const classes = useStyles();
 
-  const { typoVariant } = TopSectionLogic(props);
+  const { typoVariant, search, fieldsSchema, fieldsProps, formik } =
+    TopSectionLogic(props);
 
   return (
     <BlobScene>
@@ -83,17 +85,11 @@ function TopSection(props) {
           justifyContent='center'
           alignItems='center'
         >
-          <form noValidate className={classes.form}>
-            <TextField
-              variant='outlined'
-              margin='none'
-              fullWidth
-              id='research'
-              label='Chercher un livre (titre ou auteur)'
-              name='search'
-              type='search'
-            />
-          </form>
+          <SearchBar
+            history={props.history}
+            className={classes.form}
+            variant='outlined'
+          />
           <Divider variant='middle' width='25%' />
           <Button variant='contained' color='primary' size='large' href='/sell'>
             Mettre un livre en vente

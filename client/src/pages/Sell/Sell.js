@@ -44,8 +44,8 @@ function Sell(props) {
     return (
       <AlertPage
         icon={<BiRocket />}
-        title={'Annonce publié !'}
-        body={`Ton annonce a été publié avec succès ! Tu seras informé dès que quelqu'un sera interressé par ton offre.`}
+        title={'Annonce publiée !'}
+        body={`Ton annonce a été publié avec succès ! À partir de maintenant des personnes intéressées peuvent te contacter.`}
         ctaButton={{
           children: 'Voir mes annonces',
           onClick: goToBids,

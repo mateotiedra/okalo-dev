@@ -34,12 +34,12 @@ const verifyBidOwner = (req, res, next) => {
 
   Bid.findOne({
     where: { uuid: uuid },
-    attributes: ['userUuid'],
+    attributes: ['ownerUuid'],
   })
     .then((bid) => {
       if (bid) {
         const bidOwner =
-          Boolean(token) && authJwt.getUuidDecoded(token) === bid.userUuid;
+          Boolean(token) && authJwt.getUuidDecoded(token) === bid.ownerUuid;
 
         if (!bidOwner)
           return res.status(401).send({

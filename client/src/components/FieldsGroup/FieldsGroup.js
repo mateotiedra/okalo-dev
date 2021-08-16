@@ -2,11 +2,19 @@ import React from 'react';
 import { makeStyles, TextField } from '@material-ui/core';
 
 import PasswordField from '../PasswordField/PasswordField';
+import SearchField from '../SearchField/SearchField';
 import SelectOption from '../SelectOption/SelectOption';
 
 const useStyles = makeStyles((theme) => ({
+  root: {},
+
   hasPreviousComponents: {
     marginTop: 0,
+  },
+  noSpace: {
+    '& *': {
+      margin: 0,
+    },
   },
 }));
 
@@ -57,6 +65,15 @@ export default function FieldsGroup(props) {
     if (field.props.passwordField) {
       return <PasswordField {...field.props} keyName={field.props.key} />;
     }
+    if (field.props.searchField) {
+      return (
+        <SearchField
+          {...field.props}
+          keyName={field.props.key}
+          handleSubmit={formik.handleSubmit}
+        />
+      );
+    }
 
     return <TextField {...field.props} />;
   };
@@ -64,12 +81,19 @@ export default function FieldsGroup(props) {
   const displayPreviousComponents = (fieldRef) => {
     return fieldsProps[fieldRef].previousComponents;
   };
+
   const displayNextComponents = (fieldRef) => {
     return fieldsProps[fieldRef].nextComponents;
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} noValidate className={props.className}>
+    <form
+      onSubmit={formik.handleSubmit}
+      noValidate
+      className={`${classes.root} ${props.className} ${
+        props.noSpace ? classes.noSpace : ''
+      }`}
+    >
       {props.fieldsSchema._nodes
         .map((fieldRef, index) => {
           return (
@@ -81,6 +105,7 @@ export default function FieldsGroup(props) {
           );
         })
         .reverse()}
+
       {props.children}
     </form>
   );
