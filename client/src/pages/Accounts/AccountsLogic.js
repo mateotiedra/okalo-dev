@@ -31,12 +31,14 @@ const AccountsLogic = ({ history, match }) => {
   const [changeSuccess, setChangeSuccess] = useState(false);
 
   const saveNewValues = (values) => {
+    console.log(values);
     axios
       .post(
         API_ORIGIN + '/api/user/settings',
         {
           fullname: values.fullname,
           phone: values.phone,
+          instaName: values.instaName,
           school: values.school,
         },
         {
@@ -90,11 +92,12 @@ const AccountsLogic = ({ history, match }) => {
     email: yup.string().nullable(),
     password: yup.string().nullable(),
     phone: yup
-      .string("Tu as besoin dd'un numéro de téléphone")
+      .string('Tu peux renseigner ton numéro de téléphone.')
       .matches(
         /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
         'Numéro de téléphone incorrect'
       ),
+    instaName: yup.string('Tu peux indiquer ton compte instagram'),
   });
 
   const passwordSchema = yup.object({
@@ -135,6 +138,9 @@ const AccountsLogic = ({ history, match }) => {
     phone: {
       label: 'Numéro de téléphone',
       previousComponents: <></>,
+    },
+    instaName: {
+      label: 'Compte instagram',
     },
     school: {
       label: 'Établissement',
@@ -215,9 +221,12 @@ const AccountsLogic = ({ history, match }) => {
         setPageStatus(match.params.what || 'general');
       })
       .catch((err) => {
-        if (err.response && err.response.status === 403) {
+        if (
+          err.response &&
+          (err.response.status === 403 || err.response.status === 404)
+        ) {
           localStorage.removeItem('accessToken');
-          history.push('/auth/login');
+          history.replace('/auth/login');
         } else {
           console.log(err);
         }

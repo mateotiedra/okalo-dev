@@ -16,6 +16,7 @@ import MobileContainer from '../../components/MobileContainer/MobileContainer';
 import Navbar from '../../components/Navbar/Navbar';
 import BidsCardContainer from '../../components/BidsCardContainer/BidsCardContainer';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
+import ResultMessage from '../../components/pageParts/ResultMessage/ResultMessage';
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -35,11 +36,6 @@ const useStyles = makeStyles((theme) => ({
   },
   formLink: {
     alignSelf: 'flex-end',
-  },
-  searchMessage: {
-    fontWeight: 'bold',
-    margin: theme.spacing(6, 0, 1, 0),
-    textAlign: 'center',
   },
 }));
 
@@ -66,27 +62,6 @@ function Search(props) {
       {displayFilters ? '- Moins de filtres' : '+ Plus de filtres'}
     </Link>
   );
-
-  const searchMessage = (title, body) => {
-    return (
-      <>
-        <Typography
-          component='h2'
-          variant='h4'
-          className={classes.searchMessage}
-        >
-          {title}
-        </Typography>
-        <Typography
-          component='h3'
-          variant='body1'
-          style={{ textAlign: 'center' }}
-        >
-          {body}
-        </Typography>
-      </>
-    );
-  };
 
   if (pageStatus === 'loading') return <LoadingPage />;
 
@@ -123,17 +98,19 @@ function Search(props) {
         {pageStatus === 'loadingBooks' ? (
           <CircularProgress className={classes.loadingAnim} />
         ) : bids === 'notfound' ? (
-          searchMessage(
-            'Aucun résultat',
-            "Essaie de vérifier l'orthographe ou de réduire le nombre de filtres"
-          )
+          <ResultMessage
+            title='Aucun résultat'
+            body="Essaie de vérifier l'orthographe ou de réduire le nombre de filtres"
+          />
         ) : bids.length ? (
           <BidsCardContainer bids={bids} />
         ) : (
-          searchMessage(
-            'Chercher un livre',
-            'Tu peux trouver ton livre grâce à son titre. Pour être plus précis tu peux utiliser l\'option "Plus de filtres".'
-          )
+          <ResultMessage
+            title='Chercher un livre'
+            body={
+              'Tu peux trouver ton livre grâce à son titre. Pour être plus précis tu peux utiliser l\'option "Plus de filtres".'
+            }
+          />
         )}
       </MobileContainer>
     </>

@@ -84,7 +84,7 @@ export default function MobileContainer({
     <Container maxWidth={maxWidth || 'xs'}>
       {!noNavBar && noCenter && <Box className={classes.navBarSpace} />}
       <Box
-        className={`${classes.root} ${className}  ${
+        className={`${classes.root} ${className} ${
           noCenter ? classes.noCenter : ''
         } ${noExtraPadding ? classes.noExtraPadding : ''}`}
         style={style}

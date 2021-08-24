@@ -63,7 +63,7 @@ exports.changeUserSettings = (req, res) => {
   }
   return controllerHelper.changeObjectSettings(
     User,
-    ['fullname', 'phone', 'school', 'password'],
+    ['fullname', 'phone', 'school', 'password', 'instaName'],
     req.userId
   )(req, res);
 };

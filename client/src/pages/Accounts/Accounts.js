@@ -112,11 +112,11 @@ function Accounts(props) {
   const contactSection = (
     <Box className={classes.sectionContainer}>
       <Typography component='h6' className={classes.sectionTitle}>
-        Moyen de contact
+        Autres moyens de contact
       </Typography>
       <Typography variant='body2' className={classes.sectionBody}>
-        Ton numéro de téléphone est nécessaire afin de pouvoir créer le contact
-        entre toi et les acheteurs.
+        L'adresse email est le moyen de contact acheteur/vendeur par défaut. Tu
+        peux en ajouter d'autres si tu le souhaites.
       </Typography>
     </Box>
   );
@@ -170,7 +170,10 @@ function Accounts(props) {
               </>
             ),
           },
-          phone: { ...fieldsProps.phone, nextComponents: contactSection },
+          instaName: {
+            ...fieldsProps.instaName,
+            nextComponents: contactSection,
+          },
         }}
         formik={formik}
         fieldsVariant='standard'

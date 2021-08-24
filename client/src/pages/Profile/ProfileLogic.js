@@ -35,6 +35,10 @@ const ProfileLogic = ({ history, match }) => {
 
   const smsHref = profileData ? 'sms://' + profileData.phone : '';
   const emailHref = profileData ? 'mailto://' + profileData.email : '';
+  const instaHref = profileData
+    ? `https://www.instagram.com/${profileData.instaName}/`
+    : '';
+
   const goToBids = () => {
     setPageStatus('bids');
   };
@@ -79,7 +83,6 @@ const ProfileLogic = ({ history, match }) => {
           const date = user.createdAt.split('-');
           const dateSince = 'Membre depuis ' + Months[date[1]] + ' ' + date[0];
           setProfileData({ ...user, userSince: dateSince });
-          console.log(user);
           setPageStatus(urlPageStatus || 'bids');
         })
         .catch((err) => {
@@ -94,7 +97,7 @@ const ProfileLogic = ({ history, match }) => {
     // Starts here
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken || profileUsername.current === 'u') getUserData();
-    else getProfileData();
+    else getProfileData(profileUsername.current);
   }, [
     API_ORIGIN,
     history,
@@ -104,7 +107,15 @@ const ProfileLogic = ({ history, match }) => {
     urlPageStatus,
   ]);
 
-  return { profileData, userHimself, pageStatus, goToBids, smsHref, emailHref };
+  return {
+    profileData,
+    userHimself,
+    pageStatus,
+    goToBids,
+    smsHref,
+    emailHref,
+    instaHref,
+  };
 };
 
 export default ProfileLogic;

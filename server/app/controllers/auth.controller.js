@@ -28,6 +28,7 @@ exports.signup = (req, res) => {
     fullname: req.body.fullname,
     phone: req.body.phone,
     school: req.body.school,
+    instaName: req.body.instaName || '',
     confirmationCode: getNewConfCode(req.body.username),
   })
     .then((user) => {

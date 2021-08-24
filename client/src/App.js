@@ -21,6 +21,7 @@ import EditBid from './pages/EditBid/EditBid';
 import AskFromBoard from './pages/AskFromBoard/AskFromBoard';
 
 function App() {
+  console.log('log');
   return (
     <>
       <CssBaseline />

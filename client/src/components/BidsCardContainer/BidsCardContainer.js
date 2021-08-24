@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Link as MaterialLink } from '@material-ui/core';
 
+import ResultMessage from '../../components/pageParts/ResultMessage/ResultMessage';
 import BidCard from '../../components/BidCard/BidCard';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,6 +42,12 @@ function BidsCardContainer({ bids, addable, noBookFound }) {
           />
         );
       })}
+      {bids.length === 0 && !addable && (
+        <ResultMessage
+          title='Aucune annonce postée'
+          body="Cet utilisateur n'a pas encore posté d'annonce"
+        />
+      )}
       {addable && <BidCard className={classes.bidCard} addBidCover />}
       {noBookFound && <BidCard className={classes.bidCard} notFoundCover />}
     </Container>

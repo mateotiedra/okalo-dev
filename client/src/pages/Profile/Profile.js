@@ -1,14 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BiCog, BiTrash } from 'react-icons/bi';
+import { BiCog, BiTrash, BiPhone, BiMailSend } from 'react-icons/bi';
+import { ReactComponent as BiInsta } from '../../assets/svgs/socials/biInsta.svg';
 
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography,
-  Box,
-  Container,
-  Link as MaterialLink,
-} from '@material-ui/core';
+import { Typography, Box, Link as MaterialLink } from '@material-ui/core';
 
 import ProfileLogic from './ProfileLogic';
 
@@ -27,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     rowGap: theme.spacing(0),
     columnGap: theme.spacing(5),
+    [theme.breakpoints.down('sm')]: { padding: theme.spacing(0, 1, 0, 1) },
   },
   usernameTitle: { fontWeight: 'bold' },
   infoContainer: { paddingRight: theme.spacing(5) },
@@ -54,12 +51,42 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '125px',
     maxWidth: '200px',
   },
+  socialItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing(1),
+  },
+  socialItemIcon: {
+    opacity: 0.7,
+    width: '1.4em',
+    height: '1.4em',
+    margin: '0 0.5em 0 0.5em',
+  },
 }));
 
 function Profile(props) {
   const classes = useStyles();
-  const { profileData, userHimself, pageStatus, goToBids, smsHref, emailHref } =
-    ProfileLogic(props);
+  const {
+    profileData,
+    userHimself,
+    pageStatus,
+    goToBids,
+    smsHref,
+    emailHref,
+    instaHref,
+  } = ProfileLogic(props);
+
+  console.log(instaHref);
+
+  const socialItem = (icon, text, href) => {
+    return (
+      <li className={classes.socialItem}>
+        {icon}
+        <MaterialLink href={href}>{text}</MaterialLink>
+      </li>
+    );
+  };
 
   if (pageStatus === 'loading') return <LoadingPage />;
   else if (pageStatus === 'biddeleted')
@@ -77,7 +104,7 @@ function Profile(props) {
   return (
     <>
       <Navbar />
-      <MobileContainer maxWidth='md' noCenter responsiveFont>
+      <MobileContainer maxWidth='md' noCenter responsiveFont noExtraPadding>
         <Box className={classes.profileHeader}>
           <Typography
             component='h1'
@@ -88,27 +115,32 @@ function Profile(props) {
           </Typography>
           <Box className={classes.infoContainer}>
             <Typography variant='body'>
-              {profileData.userSince}
-              <br />
-              {'Étudiant au ' + profileData.school}
-              <br />
-              {!userHimself && (
-                <>
-                  {profileData.email && (
-                    <>
-                      <MaterialLink href={emailHref}>
-                        {profileData.email}
-                      </MaterialLink>
-                      <br />
-                    </>
-                  )}
-                  {profileData.phone && (
-                    <MaterialLink href={smsHref}>
-                      {profileData.phone}
-                    </MaterialLink>
-                  )}
-                </>
-              )}
+              <ul style={{ listStylType: 'none' }}>
+                <li>{profileData.userSince}</li>
+                <li>{'Étudiant au ' + profileData.school}</li>
+                {!userHimself && (
+                  <>
+                    {profileData.email &&
+                      socialItem(
+                        <BiPhone className={classes.socialItemIcon} />,
+                        profileData.email,
+                        emailHref
+                      )}
+                    {profileData.phone &&
+                      socialItem(
+                        <BiMailSend className={classes.socialItemIcon} />,
+                        profileData.phone,
+                        smsHref
+                      )}
+                    {profileData.instaName &&
+                      socialItem(
+                        <BiInsta className={classes.socialItemIcon} />,
+                        '@' + profileData.instaName,
+                        instaHref
+                      )}
+                  </>
+                )}
+              </ul>
             </Typography>
           </Box>
           {userHimself && (
@@ -121,8 +153,8 @@ function Profile(props) {
             </Link>
           )}
         </Box>
+        <BidsCardContainer bids={profileData.bidsOwned} addable={userHimself} />
       </MobileContainer>
-      <BidsCardContainer bids={profileData.bidsOwned} addable={userHimself} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { BiUser, BiLogIn } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Link, Grid, Box } from '@material-ui/core';
+import { Button, Link, Grid, Box, Typography } from '@material-ui/core';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
 
@@ -10,11 +10,25 @@ import FormHeader from '../../components/pageParts/FormHeader/BlobAvatar/FormHea
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  formLink: {
+    alignSelf: 'flex-end',
+  },
+  sectionContainer: {
+    margin: theme.spacing(1, 0, 1),
+  },
+  sectionTitle: {
+    color: 'grey',
+    fontWeight: 'bold',
+  },
+  sectionBody: {
+    color: 'grey',
   },
 }));
 
@@ -28,7 +42,33 @@ function Auth(props) {
     displaySignIn,
     switchSignIn,
     goToResetPasswordPage,
+    toggleMoreContact,
+    displayMoreContact,
   } = AuthLogic(props);
+
+  const moreContactLink = (
+    <Link
+      variant='body2'
+      type='button'
+      component={'button'}
+      onClick={toggleMoreContact}
+      className={classes.formLink}
+    >
+      + Ajouter d'autres moyens de contact
+    </Link>
+  );
+
+  const contactSection = (
+    <Box className={classes.sectionContainer}>
+      <Typography component='h6' className={classes.sectionTitle}>
+        Autres moyens de contact
+      </Typography>
+      <Typography variant='body2' className={classes.sectionBody}>
+        L'adresse email est le moyen de contact acheteur/vendeur par défaut. Tu
+        peux en ajouter d'autres si tu le souhaites.
+      </Typography>
+    </Box>
+  );
 
   return (
     <MobileContainer>
@@ -39,8 +79,20 @@ function Auth(props) {
       <Box noValidate className={classes.form}>
         <FieldsGroup
           fieldsSchema={fieldsSchema}
-          fieldsProps={fieldsProps}
+          fieldsProps={{
+            ...fieldsProps,
+            passwordConf: {
+              ...fieldsProps.passwordConf,
+              nextComponents: (
+                <>
+                  {contactSection}
+                  {!displaySignIn && !displayMoreContact && moreContactLink}
+                </>
+              ),
+            },
+          }}
           formik={formik}
+          className={classes.form}
         >
           <Button
             type='submit'

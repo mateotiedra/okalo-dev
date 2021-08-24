@@ -28,10 +28,18 @@ const AuthLogic = ({ history, match }) => {
   // Frontend
   const theme = useTheme();
 
-  const displaySignIn = match.params.option === 'login';
+  const [displaySignIn, setDisplaySignIn] = useState(
+    match.params.option === 'login'
+  );
+  const [displayMoreContact, setDisplayMoreContact] = useState(false);
+
+  const toggleMoreContact = () => {
+    setDisplayMoreContact(!displayMoreContact);
+  };
 
   const switchSignIn = () => {
     history.replace(`/auth/${displaySignIn ? 'signup' : 'login'}`);
+    setDisplaySignIn(!displaySignIn);
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -50,11 +58,8 @@ const AuthLogic = ({ history, match }) => {
   const signup = (values) => {
     axios
       .post(API_ORIGIN + '/api/auth/signup', {
-        email: values.email,
+        ...values,
         username: values.username.toLowerCase(),
-        school: values.school,
-        phone: values.phone,
-        password: values.password,
       })
       .then((res) => {
         values.emailOrUsername = values.email;
@@ -96,7 +101,7 @@ const AuthLogic = ({ history, match }) => {
       })
       .then((response) => {
         localStorage.setItem('accessToken', response.data.accessToken);
-        history.push('/');
+        history.push('/users/u');
       })
       .catch((err) => {
         if (errorCodeEquals(err, 404)) {
@@ -127,11 +132,6 @@ const AuthLogic = ({ history, match }) => {
 
   // Form managment
   const signupSchema = yup.object({
-    email: yup
-      .string('Entres ton adresse email')
-      .email('Adresse email invalide')
-
-      .required("N'oublies pas de donner ton adresse email"),
     username: yup
       .string("Entres ton nom d'utilisateur")
       .min(4, "Ton nom d'utilisateur doit avoir au minimum 4 caractères")
@@ -141,14 +141,15 @@ const AuthLogic = ({ history, match }) => {
         "Les espaces et les charactères spéciaux ne sont pas autorisés (sauf le point, l'underscore et le tiret)"
       )
       .required("N'oublies pas de donner ton nom d'utilisateur"),
-    phone: yup
-      .string('Entres ton numéro de téléphone')
-      .matches(
-        /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
-        'Numéro de téléphone incorrect'
-      )
-      .required("N'oublies pas de donner ton nom d'utilisateur"),
-    school: yup.string(),
+    email: yup
+      .string('Entres ton adresse email')
+      .email('Adresse email invalide')
+
+      .required("N'oublies pas de donner ton adresse email"),
+
+    school: yup
+      .string()
+      .required("N'oublies pas de renseigner ton établissement"),
     password: yup
       .string('Entres ton mot de passe')
       .matches(/[^ ]/, 'Ton mot de passe ne peut pas contenir despace')
@@ -162,6 +163,13 @@ const AuthLogic = ({ history, match }) => {
         'Le mot de passe de confirmation ne correspond pas'
       )
       .required("N'oublies pas de confirmer ton mot de passe"),
+    phone: yup
+      .string('Entres ton numéro de téléphone')
+      .matches(
+        /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
+        'Numéro de téléphone incorrect'
+      ),
+    instaName: yup.string('Entres le nom de ton compte instagram'),
   });
 
   const signinSchema = yup.object({
@@ -179,39 +187,55 @@ const AuthLogic = ({ history, match }) => {
 
   const fieldsSchema = displaySignIn ? signinSchema : signupSchema;
 
-  const formik = useFormik({
-    initialValues: displaySignIn
-      ? { emailOrUsername: '', password: '' }
-      : {
-          email: '',
-          username: '',
-          phone: '',
-          school: '',
-          password: '',
-          passwordConf: '',
-        },
-    validationSchema: fieldsSchema,
+  const signinFormik = useFormik({
+    initialValues: { emailOrUsername: '', password: '' },
+    validationSchema: signinSchema,
     onSubmit: (values) => {
-      if (displaySignIn) {
-        signin(values);
-      } else {
-        signup(values);
-      }
+      signin(values);
     },
   });
+
+  const signupFormik = useFormik({
+    initialValues: {
+      email: '',
+      username: '',
+      phone: '',
+      school: '',
+      instaName: '',
+      password: '',
+      passwordConf: '',
+    },
+    validationSchema: signupSchema,
+    onSubmit: (values) => {
+      signup(values);
+    },
+  });
+
+  const formik = displaySignIn ? signinFormik : signupFormik;
+
+  const moreContactStyle = {
+    display: displayMoreContact ? 'block' : 'none',
+  };
 
   const fieldsProps = {
     email: {
       label: 'Adresse email',
-      autoFocus: !onMobile,
       autoComplete: 'email',
     },
     username: {
       label: "Nom d'utilisateur",
+      autoFocus: !onMobile,
     },
     phone: {
-      label: 'Numéro de téléphone',
+      label: 'Numéro de téléphone ',
       autoComplete: 'phone',
+      style: moreContactStyle,
+      autoFocus: displayMoreContact,
+    },
+    instaName: {
+      label: 'Compte instagram',
+      autoComplete: 'phone',
+      style: moreContactStyle,
     },
     emailOrUsername: {
       label: "Email ou nom d'utilisateur",
@@ -219,7 +243,7 @@ const AuthLogic = ({ history, match }) => {
       autoFocus: !onMobile,
     },
     school: {
-      label: 'Établissement',
+      label: 'Établissement *',
       selectField: true,
       options: websiteData.availableSchools,
     },
@@ -254,6 +278,8 @@ const AuthLogic = ({ history, match }) => {
     signup,
     signin,
     goToResetPasswordPage,
+    toggleMoreContact,
+    displayMoreContact,
   };
 };
 
