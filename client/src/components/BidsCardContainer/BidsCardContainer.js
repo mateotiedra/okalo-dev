@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Link as MaterialLink } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 
 import ResultMessage from '../../components/pageParts/ResultMessage/ResultMessage';
 import BidCard from '../../components/BidCard/BidCard';

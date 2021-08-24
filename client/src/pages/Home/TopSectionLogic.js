@@ -1,6 +1,3 @@
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-
 const TopSectionLogic = ({ width, history, ...other }) => {
   const typoVariant = {
     xs: 'h4',

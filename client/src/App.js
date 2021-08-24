@@ -18,10 +18,8 @@ import Faq from './pages/Faq/Faq';
 import NotFoundError from './pages/errors/NotFoundError';
 import Bid from './pages/Bid/Bid';
 import EditBid from './pages/EditBid/EditBid';
-import AskFromBoard from './pages/AskFromBoard/AskFromBoard';
 
 function App() {
-  console.log('log');
   return (
     <>
       <CssBaseline />
@@ -50,8 +48,6 @@ function App() {
 
             <Route path='/bids/:uuid' exact component={Bid} />
             <Route path='/bids/edit/:uuid' exact component={EditBid} />
-
-            <Route path='/asks/:asksFilter' exact component={AskFromBoard} />
 
             <Route path='/help' exact component={Help} />
             <Route path='/search' exact component={Search} />

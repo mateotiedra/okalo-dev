@@ -12,13 +12,12 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Box,
 } from '@material-ui/core';
 
 import { BiSearch, BiMenu } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
 
-import NavbarLogic from './NabvarLogic';
+import NavbarLogic from './NavbarLogic';
 import SearchBar from '../pageParts/SearchBar/SearchBar';
 
 const useStyles = makeStyles((theme) => ({

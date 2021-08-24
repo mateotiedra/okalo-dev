@@ -31,7 +31,6 @@ const AccountsLogic = ({ history, match }) => {
   const [changeSuccess, setChangeSuccess] = useState(false);
 
   const saveNewValues = (values) => {
-    console.log(values);
     axios
       .post(
         API_ORIGIN + '/api/user/settings',

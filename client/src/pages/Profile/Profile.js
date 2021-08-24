@@ -77,8 +77,6 @@ function Profile(props) {
     instaHref,
   } = ProfileLogic(props);
 
-  console.log(instaHref);
-
   const socialItem = (icon, text, href) => {
     return (
       <li className={classes.socialItem}>

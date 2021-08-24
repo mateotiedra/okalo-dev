@@ -1,13 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-  CircularProgress,
-  Link,
-  Typography,
-  Divider,
-  Paper,
-} from '@material-ui/core';
+import { Button, CircularProgress, Link, Paper } from '@material-ui/core';
 //import EmojiIcon from '../../components/EmojiIcon/EmojiIcon';
 
 import SearchLogic from './SearchLogic';

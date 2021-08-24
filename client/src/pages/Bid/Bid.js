@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   Box,
-  Fab,
   Link as MaterialLink,
   Button,
   Dialog,

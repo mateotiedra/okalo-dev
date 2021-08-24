@@ -4,7 +4,6 @@ import {
   Typography,
   Box,
   Container,
-  TextField,
   withWidth,
   Button,
   Divider,
@@ -56,8 +55,7 @@ const useStyles = makeStyles((theme) => ({
 function TopSection(props) {
   const classes = useStyles();
 
-  const { typoVariant, search, fieldsSchema, fieldsProps, formik } =
-    TopSectionLogic(props);
+  const { typoVariant } = TopSectionLogic(props);
 
   return (
     <BlobScene>

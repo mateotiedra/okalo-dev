@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import {
   BiQuestionMark,
-  BiEnvelope,
   BiLogIn,
   BiUser,
   BiCog,

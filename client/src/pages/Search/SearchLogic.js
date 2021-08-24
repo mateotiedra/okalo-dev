@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -102,8 +102,7 @@ const SearchLogic = ({ history }) => {
     onSubmit: search,
   });
 
-  useEffect(() => {
-    if (hasFetchedData.current) return;
+  if (!hasFetchedData.current) {
     hasFetchedData.current = true;
 
     setInterceptors();
@@ -122,7 +121,7 @@ const SearchLogic = ({ history }) => {
       });
       setPageStatus('active');
     }
-  }, [API_ORIGIN, history, formik, setInterceptors, getStatusCode, search]);
+  }
 
   return {
     fieldsSchema,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, withWidth } from '@material-ui/core';
-import { BiPlusCircle, BiConfused } from 'react-icons/bi';
+import { BiPlusCircle } from 'react-icons/bi';
 
 const useStyles = makeStyles((theme) => ({
   root: {

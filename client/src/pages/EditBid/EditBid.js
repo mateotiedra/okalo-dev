@@ -1,16 +1,13 @@
 // eslint-disable-next-line
 import React from 'react';
-import { BiCog, BiTrash } from 'react-icons/bi';
+import { BiCog } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Box,
   Button,
   Collapse,
-  Divider,
   Grid,
   Link,
-  Typography,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -24,7 +21,6 @@ import EditBidLogic from './EditBidLogic';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
 import FieldsGroup from '../../components/FieldsGroup/FieldsGroup';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
-import AlertPage from '../../components/AlertPage/AlertPage';
 import FormHeader from '../../components/pageParts/FormHeader/BlobAvatar/FormHeader';
 
 const useStyles = makeStyles((theme) => ({

@@ -75,7 +75,6 @@ const BidLogic = ({ history, match }) => {
             history.push('/users/' + state.seller.username);
           },
         },
-        ,
       ],
     },
   }[pageStatus] || { buttons: [] };
@@ -94,11 +93,13 @@ const BidLogic = ({ history, match }) => {
       })
       .then(({ data }) => {
         data.bid.since = readSince(data.bid.createdAt, true);
-        setState({
-          ...state,
-          bidData: data.bid,
-          userHimself: data.bidOwner,
-          seller: { username: data.username, school: data.school },
+        setState((s) => {
+          return {
+            ...s,
+            bidData: data.bid,
+            userHimself: data.bidOwner,
+            seller: { username: data.username, school: data.school },
+          };
         });
         setPageStatus(data.bidOwner ? 'owner' : 'user');
       })
