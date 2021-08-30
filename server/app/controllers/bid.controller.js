@@ -7,24 +7,36 @@ const User = db.user;
 const Bid = db.bid;
 
 exports.searchBids = (req, res) => {
-  const { searchTitle, searchAuthor, searchEdition, searchSchool } = req.query;
+  const {
+    searchTitle,
+    searchAuthor,
+    searchEdition,
+    searchSchool,
+    searchLimit,
+  } = req.query;
+
+  const searchTitleWords = searchTitle ? searchTitle.split(' ') : [];
+
+  const searchTitleClause = searchTitleWords.map((word) => {
+    return sequelize.where(sequelize.fn('LOWER', sequelize.col('title')), {
+      [Op.like]: `%${word}%`,
+    });
+  });
+
+  const searchAuthorWords = searchAuthor
+    ? searchAuthor.replace('-', ' ').split(' ')
+    : [];
+
+  const searchAuthorClause = searchAuthorWords.map((word) => {
+    return sequelize.where(sequelize.fn('LOWER', sequelize.col('author')), {
+      [Op.like]: `%${word}%`,
+    });
+  });
 
   const whereClause = {
     [Op.and]: [
-      ...(searchTitle
-        ? [
-            sequelize.where(sequelize.fn('LOWER', sequelize.col('title')), {
-              [Op.like]: `${searchTitle}%`,
-            }),
-          ]
-        : []),
-      ...(searchAuthor
-        ? [
-            sequelize.where(sequelize.fn('LOWER', sequelize.col('author')), {
-              [Op.like]: `%${searchAuthor}%`,
-            }),
-          ]
-        : []),
+      ...searchTitleClause,
+      ...searchAuthorClause,
       ...(searchEdition
         ? [
             sequelize.where(sequelize.fn('LOWER', sequelize.col('edition')), {
@@ -40,6 +52,7 @@ exports.searchBids = (req, res) => {
     attributes: {
       exclude: ['ownerUuid'],
     },
+    limit: searchLimit || 20,
     include: [
       {
         model: User,

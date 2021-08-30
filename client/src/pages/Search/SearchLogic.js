@@ -28,20 +28,25 @@ const SearchLogic = ({ history }) => {
     setPageStatus('loadingBooks');
     const { searchTitle, searchAuthor, searchEdition, searchSchool } = query;
     history.replace(history.location.pathname, { ...query });
-    if (
-      !searchTitle.length &&
-      !searchAuthor.length &&
-      !searchEdition.length &&
-      !searchSchool.length
-    ) {
-      setBids([]);
-      setPageStatus('active');
-      return;
-    }
-
+    // if (
+    //   !searchTitle.length &&
+    //   !searchAuthor.length &&
+    //   !searchEdition.length &&
+    //   !searchSchool.length
+    // ) {
+    //   setBids([]);
+    //   setPageStatus('active');
+    //   return;
+    // }
+    console.log(searchAuthor);
     axios
       .get(API_ORIGIN + '/api/bid/search', {
-        params: { searchTitle, searchAuthor, searchEdition, searchSchool },
+        params: {
+          searchTitle: searchTitle && searchTitle.replace('-', ' ').trim(),
+          searchAuthor: searchAuthor && searchAuthor.replace('-', ' ').trim(),
+          searchEdition,
+          searchSchool,
+        },
       })
       .then(({ data }) => {
         setBids(data);
@@ -119,7 +124,7 @@ const SearchLogic = ({ history }) => {
         searchAuthor: null,
         searchEdition: null,
       });
-      setPageStatus('active');
+      search({});
     }
   }
 

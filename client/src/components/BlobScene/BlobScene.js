@@ -44,7 +44,7 @@ function BlobScene({ children, width, onlyBackground, color }) {
   const imgSrc = useRef(
     require(`../../assets/svgs/background/${device}/blob-scene-${randint(
       1,
-      3
+      device === 'deskop' ? 3 : 2
     )}.svg`).default
   );
   return (

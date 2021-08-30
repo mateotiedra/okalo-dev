@@ -11,7 +11,6 @@ import AuthConfirm from './pages/AuthConfirm/AuthConfirm';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import Profile from './pages/Profile/Profile';
 import Accounts from './pages/Accounts/Accounts';
-import Help from './pages/Help/Help';
 import Search from './pages/Search/Search';
 import Sell from './pages/Sell/Sell';
 import Faq from './pages/Faq/Faq';
@@ -49,10 +48,9 @@ function App() {
             <Route path='/bids/:uuid' exact component={Bid} />
             <Route path='/bids/edit/:uuid' exact component={EditBid} />
 
-            <Route path='/help' exact component={Help} />
+            <Route path='/contact' exact component={Faq} />
             <Route path='/search' exact component={Search} />
             <Route path='/sell' exact component={Sell} />
-            <Route path='/faq' exact component={Faq} />
             <Route component={NotFoundError} />
           </Switch>
         </ErrorHandler>

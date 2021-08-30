@@ -28,7 +28,7 @@ const NavbarLogic = () => {
     {
       title: 'Aide & contact',
       icon: <BiQuestionMark />,
-      path: '/help',
+      path: '/contact',
       displayed: true,
     },
     {

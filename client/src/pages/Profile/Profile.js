@@ -97,6 +97,7 @@ function Profile(props) {
           children: 'Voir mes annonces',
           onClick: goToBids,
         }}
+        goBackFunction={goToBids}
       />
     );
   return (
@@ -113,20 +114,20 @@ function Profile(props) {
           </Typography>
           <Box className={classes.infoContainer}>
             <Typography variant='body'>
-              <ul style={{ listStylType: 'none' }}>
+              <ul style={{ listStyleType: 'none' }}>
                 <li>{profileData.userSince}</li>
                 <li>{'Étudiant au ' + profileData.school}</li>
                 {!userHimself && (
                   <>
                     {profileData.email &&
                       socialItem(
-                        <BiPhone className={classes.socialItemIcon} />,
+                        <BiMailSend className={classes.socialItemIcon} />,
                         profileData.email,
                         emailHref
                       )}
                     {profileData.phone &&
                       socialItem(
-                        <BiMailSend className={classes.socialItemIcon} />,
+                        <BiPhone className={classes.socialItemIcon} />,
                         profileData.phone,
                         smsHref
                       )}

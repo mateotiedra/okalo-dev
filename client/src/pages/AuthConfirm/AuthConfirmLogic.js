@@ -92,7 +92,7 @@ const AuthConfirmLogic = ({ history, location, match }) => {
           ? ` à l'adresse :
          ${destinationEmail}`
           : ''
-      }. Vérifie aussi tes spams si tu le trouves pas.`,
+      }. Cela peut prendre quelques instants. Vérifie aussi tes spams si tu le trouves pas.`,
       ctaButton: {
         children: 'Recevoir un autre email',
         onClick: goToResendingPage,

@@ -39,16 +39,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     gap: theme.spacing(3),
     marginTop: theme.spacing(6),
+    [theme.breakpoints.up('sm')]: { marginTop: theme.spacing(8) },
   },
-  testBox: {
-    backgroundColor: 'coral',
-    width: '100px',
-    height: '100px',
-    margin: 0,
-  },
-  emojiWheel: {
-    width: 540,
-    [theme.breakpoints.up('sm')]: { width: 800 },
+  separator: {
+    width: '60%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
 }));
 
@@ -59,15 +57,6 @@ function TopSection(props) {
 
   return (
     <BlobScene>
-      {/*<EmojiWheel
-          list={['📕','🖋️','🎒','🖊','📙','🖍️','➕','✏️','📗','💯','📔','🎓','📘','🖌️','📖','✨','📃','📂',
-          ]}
-          animationTime={100}
-          animationRadius={wheelRadius}
-          className={classes.emojiWheel}
-          emojisSize={emojisSize}
-        />*/}
-
       <Container maxWidth='sm' className={classes.root}>
         <Typography
           variant={typoVariant}
@@ -83,15 +72,26 @@ function TopSection(props) {
           justifyContent='center'
           alignItems='center'
         >
+          <Button
+            variant='contained'
+            color='primary'
+            size='large'
+            href='/sell'
+            fullWidth
+          >
+            Mettre un livre en vente
+          </Button>
+          <Box fullWidth className={classes.separator}>
+            <Divider width='35%' />
+            <Typography style={{ opacity: 0.7 }}>ou</Typography>
+            <Divider width='35%' />
+          </Box>
+
           <SearchBar
             history={props.history}
             className={classes.form}
             variant='outlined'
           />
-          <Divider variant='middle' width='25%' />
-          <Button variant='contained' color='primary' size='large' href='/sell'>
-            Mettre un livre en vente
-          </Button>
         </Box>
       </Container>
     </BlobScene>
