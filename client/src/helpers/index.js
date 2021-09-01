@@ -40,11 +40,32 @@ const Helper = (props) => {
   const capitalize = (str, lowercase) => {
     if (lowercase) str = str.toLowerCase();
     //str[0] = str[0].toUpperCase();
-    return str.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
-    ;
+    return str
+      .trim()
+      .toLowerCase()
+      .replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   };
 
-  return { strMadeOf, randint, readSince, sentence, capitalize };
+  const normalize = (str) => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  };
+
+  const clean = (str) => {
+    return str.toLowerCase().trim().replace('  ', ' ');
+  };
+
+  return {
+    strMadeOf,
+    randint,
+    readSince,
+    sentence,
+    capitalize,
+    normalize,
+    clean,
+  };
 };
 
 export default Helper;

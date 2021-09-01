@@ -260,7 +260,14 @@ function Bid(props) {
         </div>
         <div className={classes.ctaContainer}>
           {pageData.buttons.map((button) => {
-            return <Button color='primary' variant='contained' {...button} />;
+            return (
+              <Button
+                color='primary'
+                variant='contained'
+                size='large'
+                {...button}
+              />
+            );
           })}
         </div>
       </MobileContainer>

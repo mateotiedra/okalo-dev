@@ -11,6 +11,7 @@ const transport = nodemailer.createTransport({
   host: 'smtpout.secureserver.net',
   secure: false,
   port: 587,
+  direct: true,
   //encryption: 'smarttns',
   auth: {
     user: user,

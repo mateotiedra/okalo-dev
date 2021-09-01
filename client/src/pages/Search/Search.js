@@ -61,14 +61,21 @@ function Search(props) {
   return (
     <>
       <Navbar hideSearchBar />
-      <MobileContainer noCenter responsiveFont maxWidth='md'>
+      <MobileContainer
+        arrowTopPosition={'64px'}
+        noCenter
+        responsiveFont
+        maxWidth='md'
+        noGoBackArrow
+      >
         <Paper className={classes.formContainer}>
           <FieldsGroup
             fieldsSchema={fieldsSchema}
             fieldsProps={{
               ...fieldsProps,
-              searchTitle: {
-                ...fieldsProps.searchTitle,
+              searchSchool: {
+                ...fieldsProps.searchSchool,
+
                 nextComponents: !displayFilters && filtersLink,
               },
             }}

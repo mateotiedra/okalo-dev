@@ -13,10 +13,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     gap: theme.spacing(4),
+    padding: 0,
     [theme.breakpoints.down('xs')]: {
-      justifyContent: 'center',
       gap: theme.spacing(2),
     },
   },

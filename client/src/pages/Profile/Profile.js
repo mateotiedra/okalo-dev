@@ -79,10 +79,10 @@ function Profile(props) {
 
   const socialItem = (icon, text, href) => {
     return (
-      <li className={classes.socialItem}>
+      <Box className={classes.socialItem}>
         {icon}
         <MaterialLink href={href}>{text}</MaterialLink>
-      </li>
+      </Box>
     );
   };
 
@@ -113,33 +113,33 @@ function Profile(props) {
             {profileData.username}
           </Typography>
           <Box className={classes.infoContainer}>
-            <Typography variant='body'>
-              <ul style={{ listStyleType: 'none' }}>
-                <li>{profileData.userSince}</li>
-                <li>{'Étudiant au ' + profileData.school}</li>
-                {!userHimself && (
-                  <>
-                    {profileData.email &&
-                      socialItem(
-                        <BiMailSend className={classes.socialItemIcon} />,
-                        profileData.email,
-                        emailHref
-                      )}
-                    {profileData.phone &&
-                      socialItem(
-                        <BiPhone className={classes.socialItemIcon} />,
-                        profileData.phone,
-                        smsHref
-                      )}
-                    {profileData.instaName &&
-                      socialItem(
-                        <BiInsta className={classes.socialItemIcon} />,
-                        '@' + profileData.instaName,
-                        instaHref
-                      )}
-                  </>
-                )}
-              </ul>
+            <Typography variant='body2'>
+              {profileData.userSince}
+              <br />
+              {'Étudiant(e) au ' + profileData.school}
+              <br />
+              {!userHimself && (
+                <>
+                  {profileData.email &&
+                    socialItem(
+                      <BiMailSend className={classes.socialItemIcon} />,
+                      profileData.email,
+                      emailHref
+                    )}
+                  {profileData.phone &&
+                    socialItem(
+                      <BiPhone className={classes.socialItemIcon} />,
+                      profileData.phone,
+                      smsHref
+                    )}
+                  {profileData.instaName &&
+                    socialItem(
+                      <BiInsta className={classes.socialItemIcon} />,
+                      '@' + profileData.instaName,
+                      instaHref
+                    )}
+                </>
+              )}
             </Typography>
           </Box>
           {userHimself && (

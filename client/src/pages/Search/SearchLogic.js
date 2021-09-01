@@ -9,8 +9,10 @@ import websiteData from '../../assets/data/website.json';
 
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
+import Helper from '../../helpers';
 
 const SearchLogic = ({ history }) => {
+  const { normalize } = Helper();
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
 
@@ -25,7 +27,7 @@ const SearchLogic = ({ history }) => {
   const hasFetchedData = useRef(false);
 
   const search = (query) => {
-    setPageStatus('loadingBooks');
+    if (pageStatus !== 'loading') setPageStatus('loadingBooks');
     const { searchTitle, searchAuthor, searchEdition, searchSchool } = query;
     history.replace(history.location.pathname, { ...query });
     // if (
@@ -38,12 +40,13 @@ const SearchLogic = ({ history }) => {
     //   setPageStatus('active');
     //   return;
     // }
-    console.log(searchAuthor);
+
     axios
       .get(API_ORIGIN + '/api/bid/search', {
         params: {
-          searchTitle: searchTitle && searchTitle.replace('-', ' ').trim(),
-          searchAuthor: searchAuthor && searchAuthor.replace('-', ' ').trim(),
+          searchTitle: searchTitle && normalize(searchTitle).replace('-', ' '),
+          searchAuthor:
+            searchAuthor && normalize(searchAuthor).replace('-', ' '),
           searchEdition,
           searchSchool,
         },
@@ -75,6 +78,7 @@ const SearchLogic = ({ history }) => {
   const fieldsProps = {
     searchTitle: {
       label: 'Titre',
+      style: { marginTop: 0 },
     },
     searchAuthor: {
       label: 'Auteur',
@@ -88,7 +92,6 @@ const SearchLogic = ({ history }) => {
       label: 'Lieu de vente',
       selectField: true,
       options: websiteData.availableSchools,
-      style: moreFiltersStyle,
     },
   };
 
@@ -106,6 +109,23 @@ const SearchLogic = ({ history }) => {
     validationSchema: fieldsSchema,
     onSubmit: search,
   });
+
+  const getUserData = (accessToken) => {
+    axios
+      .get(API_ORIGIN + '/api/user/u', {
+        headers: {
+          'x-access-token': accessToken,
+        },
+      })
+      .then(({ data }) => {
+        const user = data;
+        formik.setFieldValue('searchSchool', user.school);
+      })
+      .catch((err) => {})
+      .finally(() => {
+        setPageStatus('active');
+      });
+  };
 
   if (!hasFetchedData.current) {
     hasFetchedData.current = true;
@@ -126,6 +146,10 @@ const SearchLogic = ({ history }) => {
       });
       search({});
     }
+
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) getUserData(accessToken);
+    else setPageStatus('active');
   }
 
   return {

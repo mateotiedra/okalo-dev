@@ -7,6 +7,9 @@ import MobileContainer from '../../components/MobileContainer/MobileContainer';
 
 import AuthLogic from './AuthLogic';
 import FormHeader from '../../components/pageParts/FormHeader/BlobAvatar/FormHeader';
+import AlertPage from '../../components/AlertPage/AlertPage';
+
+import { BiConfused } from 'react-icons/bi';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -68,6 +71,20 @@ function Auth(props) {
         peux en ajouter d'autres si tu le souhaites.
       </Typography>
     </Box>
+  );
+
+  return (
+    <AlertPage
+      icon={<BiConfused />}
+      title='Server en maintenace...'
+      body={`Vous avez été trop nombreux à vous connecter aujourd'hui et vous avez fait planter le server plus tôt dans l'aprem (déjà 500 livres en ligne !). Il n'est donc pas possible de se connecter pour le moment. Je suis actuellement entrain de réparer ça ; merci de revenir plus tard :)`}
+      ctaButton={{
+        children: "Retourner à l'acceuil",
+        onClick: () => {
+          props.history.push('/');
+        },
+      }}
+    />
   );
 
   return (

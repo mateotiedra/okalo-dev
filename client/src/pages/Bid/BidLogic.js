@@ -24,7 +24,7 @@ const BidLogic = ({ history, match }) => {
     'Le livre a été vendu',
     'Je ne souhaite plus vendre ce livre',
   ];
-  const [deleteReason, setDeleteReason] = useState(deleteReasonOptions[0]);
+  const [deleteReason, setDeleteReason] = useState(' ');
 
   const handleDeleteReasonChange = (event) => {
     setDeleteReason(event.target.value);
@@ -35,7 +35,8 @@ const BidLogic = ({ history, match }) => {
   };
 
   const deleteBid = () => {
-    if (alertOpen) {
+    console.log(deleteReasonOptions, deleteReason);
+    if (alertOpen && deleteReasonOptions.includes(deleteReason)) {
       setPageStatus('loading');
       axios
         .delete(API_ORIGIN + '/api/bid', {
@@ -48,7 +49,7 @@ const BidLogic = ({ history, match }) => {
           },
         })
         .then((res) => {
-          history.push('/users/u/biddeleted');
+          history.replace('/users/u/biddeleted');
         })
         .catch((err) => {
           console.log(err.response.data);

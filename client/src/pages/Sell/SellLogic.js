@@ -12,7 +12,7 @@ import Helper from '../../helpers';
 const SellLogic = ({ history }) => {
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
-  const { sentence, capitalize } = Helper();
+  const { sentence, clean } = Helper();
 
   const hasFetchedData = useRef(false);
   const [pageStatus, setPageStatus] = useState('loading');
@@ -28,6 +28,9 @@ const SellLogic = ({ history }) => {
 
   const goToBids = () => {
     history.push('/users/u');
+  };
+  const goToParam = () => {
+    history.push('/accounts/edit');
   };
 
   const saveNewBidData = (values, sendData = false) => {
@@ -46,9 +49,9 @@ const SellLogic = ({ history }) => {
       .post(
         API_ORIGIN + '/api/bid/new',
         {
-          title: capitalize(values.title),
-          author: capitalize(values.author),
-          edition: capitalize(values.edition),
+          title: clean(values.title),
+          author: clean(values.author),
+          edition: clean(values.edition),
           condition: sentence(values.condition),
           annotation: sentence(values.annotation),
           note: sentence(values.note),
@@ -200,6 +203,7 @@ const SellLogic = ({ history }) => {
     formik,
     stepBack,
     goToBids,
+    goToParam,
   };
 };
 

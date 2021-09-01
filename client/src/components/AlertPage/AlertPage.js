@@ -18,9 +18,10 @@ const useStyles = makeStyles((theme) => ({
   },
   body: {
     textAlign: 'center',
+    marginBottom: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2, 0),
+    marginBottom: theme.spacing(2),
   },
   backgroundIcon: {
     position: 'absolute',
@@ -42,6 +43,12 @@ const useStyles = makeStyles((theme) => ({
 export default function AlertPage(props) {
   const classes = useStyles();
   const theme = useTheme();
+
+  const ctaButtons = props.ctaButton.length
+    ? props.ctaButton
+    : props.ctaButton
+    ? [props.ctaButton]
+    : false;
 
   const backgroundIcon = props.icon
     ? React.cloneElement(props.icon, {
@@ -81,15 +88,18 @@ export default function AlertPage(props) {
             );
           })}
         {props.children}
-        {props.ctaButton && (
-          <Button
-            variant='contained'
-            color='primary'
-            fullWidth
-            className={classes.submit}
-            {...props.ctaButton}
-          />
-        )}
+        {ctaButtons &&
+          ctaButtons.map((ctaButton) => {
+            return (
+              <Button
+                variant='contained'
+                color='primary'
+                fullWidth
+                className={classes.submit}
+                {...ctaButton}
+              />
+            );
+          })}
       </MobileContainer>
     </Box>
   );

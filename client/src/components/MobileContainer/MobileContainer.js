@@ -72,7 +72,6 @@ export default function MobileContainer({
       history.go(0);
     } else history.goBack();
   };
-
   const goBackArrowStyle = {
     top: arrowTopPosition || 0,
     left: arrowLeftPosition || 0,
