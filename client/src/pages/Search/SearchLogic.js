@@ -26,9 +26,18 @@ const SearchLogic = ({ history }) => {
 
   const hasFetchedData = useRef(false);
 
+  const updateLocationState = (changes) => {
+    history.replace(history.location.pathname, {
+      ...history.location.state,
+      ...changes,
+    });
+  };
+
   const search = (query) => {
     if (pageStatus !== 'loading') setPageStatus('loadingBooks');
-    const { searchTitle, searchAuthor, searchEdition, searchSchool } = query;
+    const { searchTitle, searchAuthor, searchEdition, searchSchool } = {
+      ...query,
+    };
     history.replace(history.location.pathname, { ...query });
     // if (
     //   !searchTitle.length &&
@@ -52,15 +61,18 @@ const SearchLogic = ({ history }) => {
         },
       })
       .then(({ data }) => {
+        updateLocationState({ searchResults: data });
         setBids(data);
       })
       .catch((err) => {
         if (getStatusCode(err) === 404) {
+          updateLocationState({ searchResults: null });
           setBids('notfound');
         }
       })
       .finally(() => {
         setPageStatus('active');
+        console.log(history.location.state);
       });
   };
 
@@ -143,8 +155,9 @@ const SearchLogic = ({ history }) => {
         searchTitle: null,
         searchAuthor: null,
         searchEdition: null,
+        searchSchool: null,
       });
-      search({});
+      search({ searchSchool: searchSchoolQuery });
     }
   };
 
@@ -154,7 +167,24 @@ const SearchLogic = ({ history }) => {
     setInterceptors();
 
     const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) getUserData(accessToken);
+
+    if (
+      history.action !== 'PUSH' &&
+      history.location.state &&
+      history.location.state.searchResults
+    ) {
+      const query = history.location.state;
+      console.log(query);
+      setBids(query.searchResults);
+      setPageStatus('active');
+
+      for (const [key, value] of Object.entries({
+        ...query,
+        searchResults: undefined,
+      })) {
+        formik.setFieldValue(key, value);
+      }
+    } else if (accessToken) getUserData(accessToken);
     else {
       firstQuery();
       setPageStatus('loadingBooks');

@@ -116,7 +116,7 @@ function Profile(props) {
             <Typography variant='body2'>
               {profileData.userSince}
               <br />
-              {'Étudiant(e) au ' + profileData.school}
+              {'Établissement : ' + profileData.school}
               <br />
               {!userHimself && (
                 <>

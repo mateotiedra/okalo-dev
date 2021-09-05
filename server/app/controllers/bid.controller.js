@@ -12,7 +12,7 @@ exports.searchBids = (req, res) => {
     searchAuthor,
     searchEdition,
     searchSchool,
-    searchLimit,
+    searchLimit = 20,
   } = req.query;
 
   const searchTitleWords = searchTitle ? searchTitle.split(' ') : [];
@@ -60,13 +60,14 @@ exports.searchBids = (req, res) => {
       },
     ],
     order: db.Sequelize.literal('rand()'),
-    limit: searchLimit || 20,
+    // limit: searchLimit || 20,
   })
     .then((bids) => {
       if (searchSchool)
         bids = bids.filter((bid) => bid.bidsOwned.school === searchSchool);
 
-      if (bids && bids.length) return res.status(200).send(bids);
+      if (bids && bids.length)
+        return res.status(200).send(bids.slice(0, searchLimit));
 
       return res.status(404).send({ message: 'Bid not found' });
     })
