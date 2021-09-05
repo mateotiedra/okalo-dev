@@ -1,9 +1,6 @@
 const FormHelper = () => {
   const isEmail = (testedEmail) => {
-    return (
-      testedEmail.includes('@') &&
-      testedEmail.indexOf('@') < testedEmail.indexOf('.')
-    );
+    return testedEmail.includes('@');
   };
 
   return { isEmail };

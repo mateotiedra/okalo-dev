@@ -15,10 +15,9 @@ const ErrorHandler = ({ children }) => {
 
   if (loadingPage) return <LoadingPage />;
 
-  switch (errorStatusCode) {
-    case 500:
-      return <Page500 />;
+  if (errorStatusCode > 500) return <Page500 />;
 
+  switch (errorStatusCode) {
     case 404:
       return <Page404 />;
 

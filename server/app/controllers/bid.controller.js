@@ -52,7 +52,6 @@ exports.searchBids = (req, res) => {
     attributes: {
       exclude: ['ownerUuid'],
     },
-    limit: searchLimit || 20,
     include: [
       {
         model: User,
@@ -60,6 +59,8 @@ exports.searchBids = (req, res) => {
         attributes: ['school'],
       },
     ],
+    order: db.Sequelize.literal('rand()'),
+    limit: searchLimit || 20,
   })
     .then((bids) => {
       if (searchSchool)

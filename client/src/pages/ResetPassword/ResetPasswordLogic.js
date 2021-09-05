@@ -4,13 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
 
-import FormHelper from '../../helpers/FormHelper';
-
 import { BiSend, BiHourglass, BiEnvelope } from 'react-icons/bi';
 
 const ResetPasswordLogic = ({ history, location, match }) => {
   const { API_ORIGIN } = AppConfig();
-  const { setInterceptors } = AxiosHelper(axios, history);
+  const { setInterceptors, getStatusCode } = AxiosHelper(axios, history);
 
   const { email } = (location && location.state) || {};
   const [destinationEmail, setDestinationEmail] = useState(email);
@@ -27,8 +25,6 @@ const ResetPasswordLogic = ({ history, location, match }) => {
   const hasFetchedData = useRef(false);
   const [pageLoaded, setPageLoaded] = useState(false);
 
-  const { isEmail } = FormHelper();
-
   const [emailField, setEmailField] = useState({
     value: '',
     error: false,
@@ -40,7 +36,7 @@ const ResetPasswordLogic = ({ history, location, match }) => {
   };
 
   const sendEmail = () => {
-    if (isEmail(emailField.value)) {
+    if (true) {
       axios
         .post(API_ORIGIN + '/api/auth/sendresetpasswordlink', {
           email: emailField.value,
@@ -50,7 +46,8 @@ const ResetPasswordLogic = ({ history, location, match }) => {
           setPageStatus('pending');
         })
         .catch((err) => {
-          if (err.response.status && err.response.status === 404) {
+          console.log(err);
+          if (getStatusCode(err) === 404) {
             setEmailField({
               value: emailField.value,
               error: true,

@@ -12,7 +12,7 @@ function ServerError() {
       icon={<BiServer />}
       color='primary'
       title='Le serveur a crashé'
-      body='Il semblerait que nos serveurs rencontrent quelques problèmes concernants cette requête... Nos techniciens ont été contactés ! Merci de réessayer plus tard.'
+      body='Il semblerait que nos serveurs rencontrent quelques problèmes concernants cette action... Merci de réessayer plus tard et de contacter okalo@contact.com si le problème persiste.'
       ctaButton={{
         children: 'Réessayer',
         onClick: () => {

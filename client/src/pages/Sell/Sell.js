@@ -46,7 +46,7 @@ function Sell(props) {
       <AlertPage
         icon={<BiRocket />}
         title={'Annonce publiée !'}
-        body={`À partir de maintenant des personnes intéressées peuvent te contacter par les moyen de contact que tu as indiquer sur ton profile.`}
+        body={`À partir de maintenant des personnes intéressées peuvent te contacter par les moyens de contact que tu as indiquer sur ton profile (email, téléphone et/ou insta).`}
         ctaButton={[
           {
             children: 'Modifier mes moyens de contact',

@@ -29,6 +29,7 @@ const SellLogic = ({ history }) => {
   const goToBids = () => {
     history.push('/users/u');
   };
+
   const goToParam = () => {
     history.push('/accounts/edit');
   };

@@ -73,19 +73,21 @@ function Auth(props) {
     </Box>
   );
 
-  return (
-    <AlertPage
-      icon={<BiConfused />}
-      title='Server en maintenace...'
-      body={`Vous avez été trop nombreux à vous connecter aujourd'hui et vous avez fait planter le server plus tôt dans l'aprem (déjà 500 livres en ligne !). Il n'est donc pas possible de se connecter pour le moment. Je suis actuellement entrain de réparer ça ; merci de revenir plus tard :)`}
-      ctaButton={{
-        children: "Retourner à l'acceuil",
-        onClick: () => {
-          props.history.push('/');
-        },
-      }}
-    />
-  );
+  if (false) {
+    return (
+      <AlertPage
+        icon={<BiConfused />}
+        title='Server en maintenace...'
+        body={`Vous avez été trop nombreux à vous connecter aujourd'hui et vous avez fait planter le server plus tôt dans l'aprem (déjà 500 livres en ligne !). Il n'est donc pas possible de se connecter pour le moment. Je suis actuellement entrain de réparer ça ; merci de revenir plus tard :)`}
+        ctaButton={{
+          children: "Retourner à l'acceuil",
+          onClick: () => {
+            props.history.push('/');
+          },
+        }}
+      />
+    );
+  }
 
   return (
     <MobileContainer>

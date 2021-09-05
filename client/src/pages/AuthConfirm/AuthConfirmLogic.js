@@ -10,12 +10,12 @@ import {
 
 import AppConfig from '../../config/AppConfig';
 import AxiosHelper from '../../helpers/AxiosHelper';
-
 import FormHelper from '../../helpers/FormHelper';
 
 const AuthConfirmLogic = ({ history, location, match }) => {
   const { API_ORIGIN } = AppConfig();
   const { setInterceptors } = AxiosHelper(axios, history);
+  const { isEmail } = FormHelper();
 
   const { email } = (location && location.state) || {};
   const [destinationEmail, setDestinationEmail] = useState(email);
@@ -30,13 +30,18 @@ const AuthConfirmLogic = ({ history, location, match }) => {
     }`
   );
 
-  const { isEmail } = FormHelper();
-
   const [emailField, setEmailField] = useState({
     value: '',
     error: false,
     helper: '',
   });
+
+  const goToBids = () => {
+    history.push('/users/u');
+  };
+  const goToParam = () => {
+    history.push('/accounts/edit');
+  };
 
   const handleEmailChange = (event) => {
     setEmailField({ ...emailField, value: event.target.value });
@@ -84,15 +89,30 @@ const AuthConfirmLogic = ({ history, location, match }) => {
   };
 
   const pagesData = {
+    ok: {
+      icon: <BiMailSend />,
+      title: 'Ton compte a été créé avec succès !',
+      body: `Vérifie bien que ton adresse email : ${destinationEmail} est correct (c'est ici que les gens vons te contacter par défaut). Tu peux ajouter d'autres moyens de contact dans la section paramètre.`,
+      ctaButton: [
+        {
+          children: 'Modifier mes moyens de contact',
+          onClick: goToParam,
+        },
+        {
+          children: 'Voir mes annonces',
+          onClick: goToBids,
+        },
+      ],
+    },
     pending: {
       icon: <BiMailSend />,
       title: 'Check ta boite mail',
       body: `Nous avons envoyé un email de confirmation${
         destinationEmail
-          ? ` à l'adresse :
+          ? ` à l'adresse suivante :
          ${destinationEmail}`
           : ''
-      }. Cela peut prendre quelques instants. Vérifie aussi tes spams si tu le trouves pas.`,
+      }. Cela peut prendre quelques minutes. Vérifie aussi tes spams si tu ne reçois rien.`,
       ctaButton: {
         children: 'Recevoir un autre email',
         onClick: goToResendingPage,

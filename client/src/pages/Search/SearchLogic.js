@@ -120,24 +120,24 @@ const SearchLogic = ({ history }) => {
       .then(({ data }) => {
         const user = data;
         formik.setFieldValue('searchSchool', user.school);
+        firstQuery(user.school);
       })
       .catch((err) => {})
-      .finally(() => {
-        setPageStatus('active');
+      .finally((data) => {
+        setPageStatus('loadingBooks');
       });
   };
 
-  if (!hasFetchedData.current) {
-    hasFetchedData.current = true;
-
-    setInterceptors();
-
+  const firstQuery = (searchSchoolQuery) => {
     const locationSearchQuery =
       history.location.state && history.location.state.searchTitle;
 
     if (locationSearchQuery) {
       formik.setFieldValue('searchTitle', locationSearchQuery);
-      search({ searchTitle: locationSearchQuery });
+      search({
+        searchTitle: locationSearchQuery,
+        searchSchool: searchSchoolQuery,
+      });
     } else {
       history.replace(history.location.pathname, {
         searchTitle: null,
@@ -146,10 +146,19 @@ const SearchLogic = ({ history }) => {
       });
       search({});
     }
+  };
+
+  if (!hasFetchedData.current) {
+    hasFetchedData.current = true;
+
+    setInterceptors();
 
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) getUserData(accessToken);
-    else setPageStatus('active');
+    else {
+      firstQuery();
+      setPageStatus('loadingBooks');
+    }
   }
 
   return {

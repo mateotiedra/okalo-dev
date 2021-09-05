@@ -44,11 +44,11 @@ export default function AlertPage(props) {
   const classes = useStyles();
   const theme = useTheme();
 
-  const ctaButtons = props.ctaButton.length
+  const ctaButtons = !props.ctaButton
+    ? false
+    : props.ctaButton.length
     ? props.ctaButton
-    : props.ctaButton
-    ? [props.ctaButton]
-    : false;
+    : [props.ctaButton];
 
   const backgroundIcon = props.icon
     ? React.cloneElement(props.icon, {

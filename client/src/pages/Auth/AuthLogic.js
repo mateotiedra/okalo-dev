@@ -144,7 +144,6 @@ const AuthLogic = ({ history, match }) => {
     email: yup
       .string('Entres ton adresse email')
       .email('Adresse email invalide')
-
       .required("N'oublies pas de donner ton adresse email"),
 
     school: yup
