@@ -75,6 +75,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
     defaultNavLinksObj,
     history,
     goToSearch,
+    goTo,
   } = NavbarLogic();
 
   const navLinksObj = persoNavLinksObj || defaultNavLinksObj;
@@ -98,7 +99,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
                 <ListItem
                   button
                   component={Link}
-                  to={link.path}
+                  onClick={goTo(link.path)}
                   key={link.title}
                   className={classes.listItem}
                 >
@@ -136,7 +137,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
               className={classes.title}
               component={Link}
               color='inherit'
-              to={'/'}
+              onClick={goTo('/')}
             >
               {title || 'okalo'}
             </Typography>
@@ -161,7 +162,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
                     <Button
                       variant={link.outlined ? 'outlined' : 'text'}
                       component={Link}
-                      to={link.path}
+                      onClick={goTo(link.path)}
                       color='inherit'
                     >
                       {link.title}

@@ -103,7 +103,7 @@ function Search(props) {
             body="Essaie de vérifier l'orthographe ou de réduire le nombre de filtres"
           />
         ) : bids.length ? (
-          <BidsCardContainer bids={bids} />
+          <BidsCardContainer bids={bids} displayUsers />
         ) : (
           <ResultMessage
             title='Chercher un livre'

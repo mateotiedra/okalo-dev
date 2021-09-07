@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
-      paddingTop: theme.spacing(4),
+      paddingTop: theme.spacing(6),
     },
   },
   noExtraPadding: {
@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
   goBackButton: {
     position: 'absolute',
     margin: theme.spacing(1),
+  },
+  notUnderNav: {
+    marginTop: theme.spacing(9),
+    [theme.breakpoints.down('xs')]: { margin: theme.spacing(7, 0, 0, 0) },
   },
 }));
 
@@ -91,7 +95,9 @@ export default function MobileContainer({
         {!noGoBackArrow && (
           <IconButton
             aria-label='back'
-            className={classes.goBackButton}
+            className={`${classes.goBackButton} ${
+              noCenter && classes.notUnderNav
+            }`}
             style={goBackArrowStyle}
             size='medium'
             onClick={goBack}

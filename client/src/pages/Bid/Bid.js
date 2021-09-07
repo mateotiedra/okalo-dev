@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   Box,
-  Link as MaterialLink,
   Button,
   Dialog,
   DialogTitle,
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(4),
     },
   },
-  bidCardContainer: {
+  bidCard: {
     height: '100%',
     margin: theme.spacing(0, 4),
     [theme.breakpoints.down('xs')]: {
@@ -47,9 +46,6 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(0, 3, 1, 3),
       maxWidth: '200px',
     },
-  },
-  bidCard: {
-    marginBottom: theme.spacing(1),
   },
   bidCardCaption: {
     textAlign: 'center',
@@ -185,19 +181,7 @@ function Bid(props) {
       <Navbar />
       <MobileContainer maxWidth='lg' noCenter responsiveFont>
         <div className={classes.pageContainer}>
-          <Box className={classes.bidCardContainer}>
-            <BidCard className={classes.bidCard} {...bidData} />
-            <Typography variant='body2' className={classes.bidCardCaption}>
-              {`Posté ${bidData.since} par `}
-              <MaterialLink
-                variant='inherit'
-                component={Link}
-                to={'/users/' + seller.username}
-              >
-                {seller.username}
-              </MaterialLink>
-            </Typography>
-          </Box>
+          <BidCard className={classes.bidCard} {...bidData} displayUser />
           <Box className={classes.infoContainer}>
             <Box className={classes.infoBox}>
               <Typography

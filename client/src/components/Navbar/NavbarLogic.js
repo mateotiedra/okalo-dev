@@ -68,6 +68,12 @@ const NavbarLogic = () => {
     history.push('/search');
   };
 
+  const goTo = (pathTo) => () => {
+    const rootLocation = history.location.pathname.split('/')[0];
+    history.push(pathTo);
+    if (rootLocation === pathTo.split('/')[0]) history.go(0);
+  };
+
   return {
     navDrawerOpen,
     openNavDrawer,
@@ -75,6 +81,7 @@ const NavbarLogic = () => {
     defaultNavLinksObj: navLinksObj,
     history,
     goToSearch,
+    goTo,
   };
 };
 

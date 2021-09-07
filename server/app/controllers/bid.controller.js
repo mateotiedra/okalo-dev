@@ -56,7 +56,7 @@ exports.searchBids = (req, res) => {
       {
         model: User,
         as: 'bidsOwned',
-        attributes: ['school'],
+        attributes: ['school', 'username'],
       },
     ],
     order: db.Sequelize.literal('rand()'),

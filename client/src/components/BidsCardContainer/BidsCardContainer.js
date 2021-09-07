@@ -6,6 +6,8 @@ import { Container } from '@material-ui/core';
 import ResultMessage from '../../components/pageParts/ResultMessage/ResultMessage';
 import BidCard from '../../components/BidCard/BidCard';
 
+import Helper from '../../helpers';
+
 const useStyles = makeStyles((theme) => ({
   bidsContainer: {
     marginTop: theme.spacing(3),
@@ -27,8 +29,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BidsCardContainer({ bids, addable, noBookFound }) {
+function BidsCardContainer({ bids, addable, noBookFound, displayUsers }) {
   const classes = useStyles();
+  const { readSince } = Helper();
 
   return (
     <Container maxWidth='md' className={classes.bidsContainer}>
@@ -38,6 +41,10 @@ function BidsCardContainer({ bids, addable, noBookFound }) {
             displayPrice
             className={classes.bidCard}
             key={bid.uuid}
+            displayUser={displayUsers}
+            sellerUsername={displayUsers && bid.bidsOwned.username}
+            since={displayUsers && readSince(bid.createdAt)}
+            shortBy
             {...bid}
           />
         );

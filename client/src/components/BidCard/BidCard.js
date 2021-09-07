@@ -2,7 +2,12 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, withWidth } from '@material-ui/core';
+import {
+  Paper,
+  Typography,
+  withWidth,
+  Link as MaterialLink,
+} from '@material-ui/core';
 import { BiPlusCircle } from 'react-icons/bi';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,6 +79,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '0.3em',
     padding: '0.2em 0.3em',
   },
+  postByText: { textAlign: 'center', marginTop: theme.spacing(1) },
 }));
 
 function BidCard({
@@ -87,6 +93,10 @@ function BidCard({
   addBidCover,
   uuid,
   displayPrice,
+  since,
+  sellerUsername,
+  displayUser,
+  shortBy,
 }) {
   const classes = useStyles();
 
@@ -173,6 +183,18 @@ function BidCard({
         )}
         <div style={{ paddingBottom: (3 / 2) * 100 + '%' }} />
       </div>
+      {displayUser && (
+        <Typography variant='body2' className={classes.postByText}>
+          {shortBy ? 'Par ' : `Posté ${since} par `}
+          <MaterialLink
+            variant='inherit'
+            component={Link}
+            to={'/users/' + sellerUsername}
+          >
+            {sellerUsername}
+          </MaterialLink>
+        </Typography>
+      )}
     </div>
   );
 }

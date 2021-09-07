@@ -94,6 +94,7 @@ const BidLogic = ({ history, match }) => {
       })
       .then(({ data }) => {
         data.bid.since = readSince(data.bid.createdAt, true);
+        data.bid.sellerUsername = data.username;
         setState((s) => {
           return {
             ...s,

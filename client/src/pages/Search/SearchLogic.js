@@ -72,7 +72,6 @@ const SearchLogic = ({ history }) => {
       })
       .finally(() => {
         setPageStatus('active');
-        console.log(history.location.state);
       });
   };
 
@@ -174,7 +173,6 @@ const SearchLogic = ({ history }) => {
       history.location.state.searchResults
     ) {
       const query = history.location.state;
-      console.log(query);
       setBids(query.searchResults);
       setPageStatus('active');
 

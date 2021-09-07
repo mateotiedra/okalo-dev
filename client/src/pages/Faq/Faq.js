@@ -13,13 +13,11 @@ function Faq() {
         <Typography>
           {'Tu as trouvé un bug sur le site ?'}
           <br />
-          {"Tu as besoin s'aide ?"}
+          {"Tu as besoin d'aide ?"}
           <br />
           {'Ou alors des suggestions pour améliorer la plateforme ?'}
           <br />
-          {
-            "N'hésites pas à contacter notre équipe à l'adresse mail suivante : "
-          }
+          {"N'hésite pas à contacter notre équipe à l'adresse mail suivante : "}
           <MaterialLink href='mailto:contact@okalo.ch'>
             contact@okalo.ch
           </MaterialLink>
