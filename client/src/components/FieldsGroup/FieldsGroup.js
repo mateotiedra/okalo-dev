@@ -22,6 +22,7 @@ export default function FieldsGroup(props) {
   const classes = useStyles();
   const fieldsProps = props.fieldsProps || false;
   const formik = props.formik || false;
+
   if (!formik || !fieldsProps) return <></>;
 
   const displayField = (fieldRef, index) => {

@@ -29,7 +29,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BidsCardContainer({ bids, addable, noBookFound, displayUsers }) {
+function BidsCardContainer({
+  bids,
+  addable,
+  noBookFound,
+  displayUsers,
+  savedContainer,
+}) {
   const classes = useStyles();
   const { readSince } = Helper();
 
@@ -49,12 +55,19 @@ function BidsCardContainer({ bids, addable, noBookFound, displayUsers }) {
           />
         );
       })}
-      {bids.length === 0 && !addable && (
-        <ResultMessage
-          title='Aucune annonce postée'
-          body="Cet utilisateur n'a pas encore posté d'annonce"
-        />
-      )}
+      {bids.length === 0 &&
+        !addable &&
+        (savedContainer ? (
+          <ResultMessage
+            title='Aucune annonce savegardée'
+            body="Tu n'as sauvegardé aucune d'annonce"
+          />
+        ) : (
+          <ResultMessage
+            title='Aucune annonce postée'
+            body="Cet utilisateur n'a pas encore posté d'annonce"
+          />
+        ))}
       {addable && <BidCard className={classes.bidCard} addBidCover />}
       {noBookFound && <BidCard className={classes.bidCard} notFoundCover />}
     </Container>

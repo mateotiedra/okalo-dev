@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%',
+    maxWidth: '100%',
   },
   whiteBackground: {
     backgroundColor: 'white',
@@ -145,7 +145,6 @@ function BidCard({
                   {title}
                 </Typography>
               </div>
-
               <div
                 className={
                   classes.secondaryInfos + ' ' + classes.whiteBackground

@@ -12,9 +12,10 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Badge,
 } from '@material-ui/core';
 
-import { BiSearch, BiMenu } from 'react-icons/bi';
+import { BiSearch, BiMenu, BiBookmarks } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
 
 import NavbarLogic from './NavbarLogic';
@@ -33,19 +34,26 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    position: 'relative',
   },
   navLinks: {
     display: 'none',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
+      alignItems: 'center',
       gap: theme.spacing(1),
     },
   },
   titleAndSearch: {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      position: 'absolute',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
     [theme.breakpoints.up('md')]: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: theme.spacing(3),
       flex: 1,
       marginRight: theme.spacing(5),
       maxWidth: theme.spacing(100),
@@ -53,10 +61,10 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontWeight: 'bold',
-    [theme.breakpoints.up('md')]: {},
   },
   searchBar: {
     flex: 1,
+    marginLeft: theme.spacing(3),
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
@@ -75,7 +83,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
     defaultNavLinksObj,
     history,
     goToSearch,
-    goTo,
+    nbrSavedBids,
   } = NavbarLogic();
 
   const navLinksObj = persoNavLinksObj || defaultNavLinksObj;
@@ -99,12 +107,12 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
                 <ListItem
                   button
                   component={Link}
-                  onClick={goTo(link.path)}
+                  to={link.to}
                   key={link.title}
                   className={classes.listItem}
                 >
                   <ListItemIcon>
-                    {React.cloneElement(link.icon, { size: 15 })}
+                    {React.cloneElement(link.icon, { size: 20 })}
                   </ListItemIcon>
                   <ListItemText primary={link.title} />
                 </ListItem>
@@ -117,6 +125,18 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
       </div>
     </SwipeableDrawer>
   );
+
+  const savedBidsButton = (className) => {
+    return nbrSavedBids ? (
+      <IconButton component={Link} to={'/bids/saved'} className={className}>
+        <Badge badgeContent={nbrSavedBids} max={9} color='secondary'>
+          <BiBookmarks color='black' />
+        </Badge>
+      </IconButton>
+    ) : (
+      <></>
+    );
+  };
 
   return (
     <div className={classes.root}>
@@ -137,7 +157,7 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
               className={classes.title}
               component={Link}
               color='inherit'
-              onClick={goTo('/')}
+              to={'/'}
             >
               {title || 'okalo'}
             </Typography>
@@ -145,29 +165,33 @@ export default function Navbar({ title, persoNavLinksObj, hideSearchBar }) {
               <SearchBar history={history} className={classes.searchBar} />
             )}
           </div>
-          <IconButton
-            edge='end'
-            className={classes.menuButton}
-            color='inherit'
-            aria-label='menu'
-            onClick={goToSearch}
-          >
-            <BiSearch />
-          </IconButton>
+          <div>
+            {!hideSearchBar && (
+              <IconButton
+                edge='end'
+                className={classes.menuButton}
+                color='inherit'
+                aria-label='menu'
+                onClick={goToSearch}
+              >
+                <BiSearch />
+              </IconButton>
+            )}
+            {savedBidsButton(classes.menuButton)}
+          </div>
           <div className={classes.navLinks}>
+            {savedBidsButton()}
             {navLinksObj.map((link) => {
               if (link.displayed) {
                 return (
-                  <React.Fragment key={link.title}>
-                    <Button
-                      variant={link.outlined ? 'outlined' : 'text'}
-                      component={Link}
-                      onClick={goTo(link.path)}
-                      color='inherit'
-                    >
-                      {link.title}
-                    </Button>
-                  </React.Fragment>
+                  <Button
+                    variant={link.outlined ? 'outlined' : 'text'}
+                    component={Link}
+                    to={link.to}
+                    color='inherit'
+                  >
+                    {link.title}
+                  </Button>
                 );
               }
               return <React.Fragment key={link.title}></React.Fragment>;

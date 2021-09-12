@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BiCog } from 'react-icons/bi';
+import { BiCog, BiQuestionMark } from 'react-icons/bi';
 
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -17,12 +17,13 @@ import {
 } from '@material-ui/core';
 
 import BidLogic from './BidLogic';
+import Helper from '../../helpers';
 
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 import MobileContainer from '../../components/MobileContainer/MobileContainer';
 import BidCard from '../../components/BidCard/BidCard';
 import Navbar from '../../components/Navbar/Navbar';
-import Helper from '../../helpers';
+import AlertPage from '../../components/AlertPage/AlertPage';
 
 const useStyles = makeStyles((theme) => ({
   pageContainer: {
@@ -117,6 +118,7 @@ function Bid(props) {
     handleDeleteReasonChange,
     deleteReason,
     deleteReasonOptions,
+    goBackToHome,
   } = BidLogic(props);
 
   const { sentence } = Helper();
@@ -137,8 +139,6 @@ function Bid(props) {
       </Typography>
     );
   };
-
-  if (pageStatus === 'loading') return <LoadingPage />;
 
   const ownerDialog = (
     <Dialog
@@ -176,6 +176,21 @@ function Bid(props) {
     </Dialog>
   );
 
+  if (pageStatus === 'loading') return <LoadingPage />;
+  if (pageStatus === 'notFound') {
+    return (
+      <AlertPage
+        color='primary'
+        icon={<BiQuestionMark />}
+        title='Annonce introuvable'
+        body="L'annonce auquelle tu essaies d'accéder n'existe pas ou plus. L'annonceur a probablement trouvé un acheteur et supprimé l'annnonce."
+        ctaButton={{
+          children: "Retourner à l'acceuil",
+          onClick: goBackToHome,
+        }}
+      />
+    );
+  }
   return (
     <>
       <Navbar />

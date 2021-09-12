@@ -44,6 +44,15 @@ const ProfileLogic = ({ history, match }) => {
   };
 
   useEffect(() => {
+    if (
+      profileUsername.current !== match.params.username &&
+      pageStatus !== 'loading'
+    ) {
+      setPageStatus('loading');
+      hasFetchedData.current = false;
+      profileUsername.current = match.params.username;
+    }
+
     if (hasFetchedData.current) return;
     hasFetchedData.current = true;
 
@@ -105,6 +114,8 @@ const ProfileLogic = ({ history, match }) => {
     setInterceptors,
     getStatusCode,
     urlPageStatus,
+    match.params.username,
+    pageStatus,
   ]);
 
   return {

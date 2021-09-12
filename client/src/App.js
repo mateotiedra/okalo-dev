@@ -16,6 +16,7 @@ import Sell from './pages/Sell/Sell';
 import Faq from './pages/Faq/Faq';
 import NotFoundError from './pages/errors/NotFoundError';
 import Bid from './pages/Bid/Bid';
+import Saved from './pages/Saved/Saved';
 import EditBid from './pages/EditBid/EditBid';
 
 function App() {
@@ -39,12 +40,18 @@ function App() {
               component={ResetPassword}
             />
 
-            <Route path='/users/:username' exact component={Profile} />
+            <Route
+              path='/users/:username'
+              exact
+              component={Profile}
+              key={Math.random()}
+            />
             <Route path='/users/u/:pageStatus' exact component={Profile} />
 
             <Route path='/accounts/edit' exact component={Accounts} />
             <Route path='/accounts/edit/:what' exact component={Accounts} />
 
+            <Route path='/bids/saved' exact component={Saved} />
             <Route path='/bids/:uuid' exact component={Bid} />
             <Route path='/bids/edit/:uuid' exact component={EditBid} />
 
