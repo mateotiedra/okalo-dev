@@ -64,7 +64,7 @@ function TopSection(props) {
           align="center"
           className={classes.topline}
         >
-          La dede pour trouver tes livres pas chers.
+          La plateforme pour trouver tes livres pas chers.
         </Typography>
         <Box
           className={classes.ctaContainer}
